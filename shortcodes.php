@@ -75,10 +75,16 @@ class KickgogoShortcodes {
 	
 	private function get_campaign($name) {
 		global $wpdb;
-		$res = $wpdb->get_results("
-			SELECT * FROM $this->table_name
-			WHERE name = '" . esc_sql($name) . "'"
-			);
+		if (is_numeric($name)) {
+			$sql = "
+				SELECT * FROM $this->table_name
+				WHERE id = " . ((int)$name);
+		} else {
+			$sql = "
+				SELECT * FROM $this->table_name
+				WHERE name = '" . esc_sql($name) . "'";
+		}
+		$res = $wpdb->get_results($sql);
 		$campaign = current($res);
 		$self = home_url(add_query_arg([]));
 		$campaign->success_langing_page = home_url('/kickgogo-handler/') . base64_encode(
