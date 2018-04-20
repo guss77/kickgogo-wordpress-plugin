@@ -2,10 +2,10 @@
 /*
  Plugin Name: KickGoGo
  Plugin URI:  http://github.com/guss77/kickgogo-wordpress-plugin
- Description: Payment goal counter
- Version:     1.0
+ Description: Crowd-funding campaign manager
+ Version:     1.0.1
  Author:      Oded Arbel
- Author URI:  http://geek.co.il
+ Author URI:  https://github.com/guss77/kickgogo-wordpress-plugin
  License:     GPL2
  License URI: https://www.gnu.org/licenses/gpl-2.0.html
  Domain Path: /languages
