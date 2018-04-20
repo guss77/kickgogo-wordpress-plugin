@@ -277,17 +277,17 @@ class KickgogoSettingsPage {
 	
 	public function handle_delete($id) {
 		global $wpdb;
-		var_dump($wpdb->delete($this->table_name, [ 'id' => $id ]));
+		$wpdb->delete($this->table_name, [ 'id' => $id ]);
 	}
 	
 	public function handle_enable($id) {
 		global $wpdb;
-		var_dump($wpdb->update($this->table_name, [ 'active' => 1 ], [ 'id' => $id ]));
+		$wpdb->update($this->table_name, [ 'active' => 1 ], [ 'id' => $id ]);
 	}
 	
 	public function handle_disable($id) {
 		global $wpdb;
-		var_dump($wpdb->update($this->table_name, [ 'active' => 0 ], [ 'id' => $id ]));
+		$wpdb->update($this->table_name, [ 'active' => 0 ], [ 'id' => $id ]);
 	}
 	
 	public function report_error($error) {
