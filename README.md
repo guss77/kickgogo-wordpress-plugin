@@ -4,7 +4,7 @@ Tags: payments, funding
 Requires at least: 4.8.0
 Tested up to: 4.9.5
 Requires PHP: 7.0.0
-Stable tag: 1.0.4
+Stable tag: 1.0.5
 License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -57,6 +57,9 @@ Automatic updates should work just fine.
 1. Go to the page or post where you want to display the status of your campaign and use the short code `[kickgogo-status]` or the other display short codes (see details below).
 
 ### Shortcodes
+
+The shortcode examples below are not shown correctly in the Wordpress plugin directory. You can check out the [plugin home page at https://github.com/guss77/kickgogo-wordpress-plugin](https://github.com/guss77/kickgogo-wordpress-plugin)
+for more correct details.
 
 #### Payment Button
 
