@@ -7,7 +7,7 @@ class KickgogoPelepayConstants {
      * following script:
      * `curl http://fly.ayit.co.il/parsing/errorslist.txt | iconv -fcp1255 -tutf-8 | while read code message; do echo "'$code' => '$message',"; done`
      */
-    public const RESPONSE_CODES = [
+    const RESPONSE_CODES = [
         '000' => 'עיסקה תקינה',
         '001' => 'חסום,החרם כרטיס',
         '002' => 'גנוב,החרם כרטיס',
