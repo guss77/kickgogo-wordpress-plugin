@@ -1,4 +1,4 @@
-# kickgogo-wordpress-plugin
+# KickGoGo
 Crowd-funding functionality for Wordpress sites
 
 Create campaigns, add pay buttons to pages or posts and track campaign status.
