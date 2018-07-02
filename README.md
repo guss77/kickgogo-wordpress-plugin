@@ -1,12 +1,12 @@
 # KickGoGo
-Contributors: Guss77
-Tags: payments, funding
-Requires at least: 4.8.0
-Tested up to: 4.9.5
-Requires PHP: 7.0.0
-Stable tag: 1.0.5
-License: GPLv2
-License URI: http://www.gnu.org/licenses/gpl-2.0.html
+- Contributors: Guss77
+- Tags: payments, funding
+- Requires at least: 4.8.0
+- Tested up to: 4.9.5
+- Requires PHP: 7.0.0
+- Stable tag: 1.0.5
+- License: GPLv2
+- License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
 Crowd-funding functionality for Wordpress sites
 
@@ -50,11 +50,11 @@ Automatic updates should work just fine.
 ## Usage
 
 1. Login to your Wordpress administration panel.
-1. Go to **Plugins** and activate Kickgogo.
-1. Go to **Options** -> **Kickgogo** and set up your Pelepay account ID.
-1. Go to the **Kickgogo** main page and create a new campaign. Set the name to be displayed to the users in the processor payment page and the target goal. Its also possible to specify a default pay amount - it makes it easier if you don't want to create multiple pay buttons.
-1. Go to the page or post where you want to put the payment button and add a button by using the short code `[kickgogo]` (see details below).
-1. Go to the page or post where you want to display the status of your campaign and use the short code `[kickgogo-status]` or the other display short codes (see details below).
+2. Go to **Plugins** and activate Kickgogo.
+3. Go to **Options** -> **Kickgogo** and set up your Pelepay account ID.
+4. Go to the **Kickgogo** main page and create a new campaign. Set the name to be displayed to the users in the processor payment page and the target goal. Its also possible to specify a default pay amount - it makes it easier if you don't want to create multiple pay buttons.
+5. Go to the page or post where you want to put the payment button and add a button by using the short code `[kickgogo]` (see details below).
+6. Go to the page or post where you want to display the status of your campaign and use the short code `[kickgogo-status]` or the other display short codes (see details below).
 
 ### Shortcodes
 
