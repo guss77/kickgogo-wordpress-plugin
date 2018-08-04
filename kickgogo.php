@@ -14,10 +14,10 @@
 
 defined( 'ABSPATH' ) or die( 'No script kiddies please!' );
 
-require_once __DIR__.'/options.php';
+require_once __DIR__.'/inc/options.php';
 require_once __DIR__.'/inc/functions.php';
 require_once __DIR__.'/inc/pelepay.php';
-require_once __DIR__.'/shortcodes.php';
+require_once __DIR__.'/inc/shortcodes.php';
 
 register_activation_hook( __FILE__, 'kickgogo_install' );
 add_action( 'plugins_loaded', 'kickgogo_update_db');
