@@ -19,7 +19,11 @@ require_once __DIR__.'/inc/functions.php';
 require_once __DIR__.'/inc/pelepay.php';
 require_once __DIR__.'/inc/shortcodes.php';
 
-register_activation_hook( __FILE__, 'kickgogo_install' );
-add_action( 'plugins_loaded', 'kickgogo_update_db');
-add_action( 'admin_enqueue_scripts', 'kickgogo_custom_wp_admin_style' );
-add_action( 'parse_request', [ $kickgogo_ref, 'handle_callbacks']);
+if (is_admin()) {
+	register_activation_hook( __FILE__, 'kickgogo_install' );
+	add_action( 'plugins_loaded', 'kickgogo_update_db');
+	add_action( 'admin_enqueue_scripts', 'kickgogo_custom_wp_admin_style' );
+} else {
+	$kickgogo_ref = new KickgogoShortcodes();
+	add_action( 'parse_request', [ $kickgogo_ref, 'handle_callbacks']);
+}

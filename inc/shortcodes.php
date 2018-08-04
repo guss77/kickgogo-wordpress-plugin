@@ -124,6 +124,3 @@ class KickgogoShortcodes {
 	}
 	
 }
-
-if (!is_admin())
-	$kickgogo_ref = new KickgogoShortcodes();
