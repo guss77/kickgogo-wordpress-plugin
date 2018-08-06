@@ -65,7 +65,7 @@ class KickgogoShortcodes {
 		if (!($campaign = $this->get_campaign($atts['name']))) {
 			return "Invalid Kickgogo Campaign '{$atts['name']}'";
 		}
-		return (int)(100 * $campaign->current / $campaign->goal);
+		return min(100, (int)(100 * $campaign->current / $campaign->goal));
 	}
 	
 	public function display_status($atts, $content = null) {
