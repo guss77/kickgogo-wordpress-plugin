@@ -2,9 +2,9 @@
 - Contributors: Guss77
 - Tags: payments, funding
 - Requires at least: 4.8.0
-- Tested up to: 4.9.5
+- Tested up to: 4.9.8
 - Requires PHP: 7.0.0
-- Stable tag: 1.3.0
+- Stable tag: 1.3.1
 - License: GPLv2
 - License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
