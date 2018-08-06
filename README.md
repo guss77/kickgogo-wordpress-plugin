@@ -69,7 +69,7 @@ The short code takes the following parameters:
 
  * `name` (**Required**) - Specify the name of the campaign this button will apply to. Can also be the numeric ID of the campaign as shown in the campaign list. If this is not specified or an invalid value is specified, the short code will show an error message instead of the button.
  * `amount` (Optional) - Specify the amount to be payed into the campaign. If this is not specified, then the default pay amount set on the campaign will be used instead. If this is not specified and the campaign has no default amount set, the short code will show an error message instead of the button.
-
+ * `club` (Optional) - set to "yes" (or actually, any text) to allow this funding amount only for club members. Set the Club Page option as well as the Club API Endpoint for club membership check to work.
 The shortcode also requires content which will be used as the text on the payment button. If no content is specified, the default text "Donate" is shown instead.
 
 Example:
