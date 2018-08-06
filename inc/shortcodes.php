@@ -17,6 +17,7 @@ class KickgogoShortcodes {
 		add_shortcode('kickgogo-amount', [ $this, 'display_amount' ]);
 		add_shortcode('kickgogo-percent', [ $this, 'display_percent' ]);
 		add_shortcode('kickgogo-progress', [ $this, 'display_progress' ]);
+		add_shortcode('kickgogo-payments', [ $this, 'display_payments' ]);
 		add_shortcode('kickgogo-club-login', [ $this, 'display_club_login' ]);
 	}
 	
@@ -29,7 +30,7 @@ class KickgogoShortcodes {
 		$checkClub = (bool)$atts['club'];
 		$content = $content ?: 'Donate';
 		
-		if (!($campaign = $this->get_campaign($atts['name']))) {
+		if (!($campaign = $this->settings->getCampaign($atts['name']))) {
 			return "Invalid Kickgogo Campaign '{$atts['name']}'";
 		}
 		
@@ -47,7 +48,7 @@ class KickgogoShortcodes {
 	
 	public function display_goal($atts, $content = null) {
 		$atts = shortcode_atts([ 'name' => '' ], $atts, 'kickgogo-goal');
-		if (!($campaign = $this->get_campaign($atts['name']))) {
+		if (!($campaign = $this->settings->getCampaign($atts['name']))) {
 			return "Invalid Kickgogo Campaign '{$atts['name']}'";
 		}
 		return $campaign->goal;
@@ -55,7 +56,7 @@ class KickgogoShortcodes {
 	
 	public function display_amount($atts, $content = null) {
 		$atts = shortcode_atts([ 'name' => '' ], $atts, 'kickgogo-amount');
-		if (!($campaign = $this->get_campaign($atts['name']))) {
+		if (!($campaign = $this->settings->getCampaign($atts['name']))) {
 			return "Invalid Kickgogo Campaign '{$atts['name']}'";
 		}
 		return $campaign->current;
@@ -63,7 +64,7 @@ class KickgogoShortcodes {
 	
 	public function display_percent($atts, $content = null) {
 		$atts = shortcode_atts([ 'name' => '' ], $atts, 'kickgogo-percent');
-		if (!($campaign = $this->get_campaign($atts['name']))) {
+		if (!($campaign = $this->settings->getCampaign($atts['name']))) {
 			return "Invalid Kickgogo Campaign '{$atts['name']}'";
 		}
 		return min(100, (int)(100 * $campaign->current / $campaign->goal));
@@ -71,20 +72,20 @@ class KickgogoShortcodes {
 	
 	public function display_progress($atts, $content = null) {
 		$atts = shortcode_atts([ 'name' => '' ], $atts, 'kickgogo-percent');
-		if (!($campaign = $this->get_campaign($atts['name']))) {
+		if (!($campaign = $this->settings->getCampaign($atts['name']))) {
 			return "Invalid Kickgogo Campaign '{$atts['name']}'";
 		}
 		$percent = min(100, (int)(100 * $campaign->current / $campaign->goal));
 		if ($percent > 0)
 			$width = "{$percent}%";
-		else
-			$width = "3px";
-		
-		$hidein = $percent < 70 ? 'style="display: none;"' : '';
-		$hideout = $percent >= 70 ? 'style="display: none;"' : '';
-			
-		ob_start();
-		?><div class="kickgogo-progress-container"><?php
+			else
+				$width = "3px";
+				
+				$hidein = $percent < 70 ? 'style="display: none;"' : '';
+				$hideout = $percent >= 70 ? 'style="display: none;"' : '';
+				
+				ob_start();
+				?><div class="kickgogo-progress-container"><?php
 			?><div class="kickgogo-progress-bar" style="width: <?php echo $width?>"><?php
 				?><div class="kickgogo-percent-progress-in" <?php echo $hidein?>><?php echo $percent?>%</div><?php
 			?></div><?php
@@ -95,37 +96,22 @@ class KickgogoShortcodes {
 		return ob_get_clean();
 	}
 	
+	public function display_payments($atts, $content = null) {
+		$atts = shortcode_atts([ 'name' => '' ], $atts, 'kickgogo-percent');
+		if (!($campaign = $this->settings->getCampaign($atts['name']))) {
+			return "Invalid Kickgogo Campaign '{$atts['name']}'";
+		}
+		return $this->settings->getTransactionCount($atts['name']);
+	}
+	
 	public function display_status($atts, $content = null) {
 		$atts = shortcode_atts([ 'name' => '' ], $atts, 'kickgogo-status');
-		if (!($campaign = $this->get_campaign($atts['name']))) {
+		if (!($campaign = $this->settings->getCampaign($atts['name']))) {
 			return "Invalid Kickgogo Campaign '{$atts['name']}'";
 		}
 		return sprintf($content ?: "%d of %d (%d%%)",
 			$campaign->current, $campaign->goal,
 			(int)(100 * $campaign->current / $campaign->goal));
-	}
-	
-	private function get_campaign($name) {
-		global $wpdb;
-		if (is_numeric($name)) {
-			$sql = "
-				SELECT * FROM $this->table_name
-				WHERE id = " . ((int)$name);
-		} else {
-			$sql = "
-				SELECT * FROM $this->table_name
-				WHERE name = '" . esc_sql($name) . "'";
-		}
-		$res = $wpdb->get_results($sql);
-		$campaign = current($res);
-		if (!$campaign)
-			return false;
-		$self = home_url(add_query_arg([]));
-		$campaign->success_langing_page = home_url('/kickgogo-handler/') . base64_encode(
-			$campaign->success_langing_page ?: $self);
-		$campaign->failure_landing_page = home_url('/kickgogo-handler/') . base64_encode(
-			$campaign->failure_landing_page ?: $campaign->success_langing_page);
-		return $campaign;
 	}
 	
 	private function update_campaign($id, $amount) {
@@ -161,7 +147,7 @@ class KickgogoShortcodes {
 		
 		if (isset($_POST['email'])) {
 			$email = $_POST['email'];
-			$campaign = $this->get_campaign($campaignName);
+			$campaign = $this->settings->getCampaign($campaignName);
 			if (!$campaign) {
 				$error = "Invalid campaign name";
 			} else {

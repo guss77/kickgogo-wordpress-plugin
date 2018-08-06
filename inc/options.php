@@ -6,7 +6,8 @@ class KickgogoSettingsPage {
 	private $club_login_page;
 	private $club_api_url;
 	private $errors = [];
-	private $table_name;
+	private $campaign_table;
+	private $transaction_table;
 	
 	const KICK_ICON = 'data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iaXNvLTg4NTktMSI/Pgo8IS0tIEdlbmVyYXRvcjogQWRvYmUgSWxsdXN0cmF0b3IgMTguMS4xLCBTVkcgRXhwb3J0IFBsdWctSW4gLiBTVkcgVmVyc2lvbjogNi4wMCBCdWlsZCAwKSAgLS0+CjxzdmcgdmVyc2lvbj0iMS4xIiBpZD0iQ2FwYV8xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB4PSIwcHgiIHk9IjBweCIKCSB2aWV3Qm94PSIwIDAgMTguNzQgMTguNzQiIHN0eWxlPSJlbmFibGUtYmFja2dyb3VuZDpuZXcgMCAwIDE4Ljc0IDE4Ljc0OyIgeG1sOnNwYWNlPSJwcmVzZXJ2ZSI+CjxnPgoJPGc+CgkJPHBhdGggc3R5bGU9ImZpbGw6IzAzMDEwNDsiIGQ9Ik0xNC44OTgsMTAuMDMxbDAuMDE0LTAuMDA0YzAsMC0wLjI2NS0xLjg0Ny0xLjg0NS0xLjc0NmMwLDAtMC45NjMsMC4xODQtMi4yOTEsMC4yMDF2MS40NDRIOS45OTgKCQkJVjguNDcyQzkuNzY0LDguNDYzLDkuNTIyLDguNDQ3LDkuMjc2LDguNDI0djEuMzA4SDguNDk4VjguMzI1Yy0wLjIzLTAuMDM3LTAuNDYyLTAuMDgzLTAuNjk0LTAuMTM3VjkuMzdINy4wMjdWNy45NjkKCQkJQzYuNjYzLDcuODQ4LDYuMzA2LDcuNzAyLDUuOTY1LDcuNTI0Yy0wLjIzOC0wLjEyNS0xLjQ5OC0zLjYxLTEuNzE4LTMuNzY2TDAsNS4wOThsMC42MiwzLjgxNQoJCQljLTEuMjcxLDEuNTM5LDEuMjcsNC45OTIsMS4yNyw0Ljk5MkwxLjkwMywxMy45Yy0wLjAwMywwLjAxLTAuMDA5LDAuMDIxLTAuMDA2LDAuMDNsMC4zMiwxLjAwMgoJCQljMC4wMTgsMC4wNTgsMC4xNTksMC4wNjYsMC4zMTIsMC4wMmwyLjU2Ny0wLjc4OWMwLDAtMC41ODYtMS40OTUsMC43MDEtMS44OTJjMC4zMjgtMC4xMDgsMC42NzItMC4wMDIsMC42NzItMC4wMDIKCQkJYzAuOTQ4LDAuMjIyLDIuMTA0LDAuODI0LDIuMTA0LDAuODI0bDYuMzczLTEuOTZjMC4xNTItMC4wNDYsMC4yNjQtMC4xMzMsMC4yNDYtMC4xOTFsLTAuMjc0LTAuODkKCQkJQzE0LjkxNiwxMC4wNDQsMTQuOTA2LDEwLjAzOCwxNC44OTgsMTAuMDMxeiIvPgoJCTxwYXRoIHN0eWxlPSJmaWxsOiMwMzAxMDQ7IiBkPSJNMTcuNDc5LDguNzI2bDEuMjYxLTAuMzg4TDE3LjQ0Niw4LjA4Yy0wLjg2OC0wLjE3My0xLjQ1My0wLjUyNy0xLjczOC0xLjA1MQoJCQljLTAuNDI3LTAuNzgzLTAuMDYzLTEuNzI4LTAuMDYtMS43MzZsMC4zODYtMC45NmwtMC44NzMsMC41NTRjLTAuNjY5LDAuNDI0LTEuMjg4LDAuNTU0LTEuODQsMC4zODUKCQkJYy0wLjk2OS0wLjI5Ni0xLjQ2Ny0xLjQxNS0xLjQ3Mi0xLjQyN0wxMS4yMzgsNC4xMWMwLjAyNCwwLjA1OCwwLjYxOSwxLjQwOCwxLjg4MywxLjc5OGMwLjU0NywwLjE2OSwxLjEyOSwwLjEzMSwxLjczMi0wLjExMgoJCQljLTAuMDQ5LDAuNDM4LTAuMDI1LDEuMDA4LDAuMjY2LDEuNTQ3YzAuMjc3LDAuNTEzLDAuNzQsMC44OTksMS4zODIsMS4xNTVjLTAuMzA1LDAuMjI1LTAuNjE3LDAuNTU2LTAuNzcxLDEuMDIKCQkJYy0wLjI1LDAuNzUtMC4wMTYsMS42MiwwLjY5MywyLjU4OWwwLjUzNy0wLjM5NGMtMC41NzItMC43ODMtMC43NzQtMS40NDktMC42LTEuOTgxQzE2LjU5Nyw5LjAxMSwxNy40NzEsOC43MjgsMTcuNDc5LDguNzI2eiIvPgoJPC9nPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+Cjwvc3ZnPgo=';
 	
@@ -16,7 +17,8 @@ class KickgogoSettingsPage {
 	public function __construct()
 	{
 		global $wpdb;
-		$this->table_name = $wpdb->prefix . "_kickgogo_campaigns";
+		$this->campaign_table = $wpdb->prefix . "kickgogo_campaigns";
+		$this->transaction_table = $wpdb->prefix . "kickgogo_transactions";
 		add_action( 'admin_menu', array( $this, 'add_plugin_page' ) );
 		add_action( 'admin_init', array( $this, 'page_init' ) );
 	}
@@ -189,11 +191,12 @@ class KickgogoSettingsPage {
 		<div>
 		<table class="widefat">
 		<thead>
-			<tr><th>#</th><th>Name</th><th>Goal</th><th>Defalt</th><th></th><th></th></tr>
+			<tr><th>#</th><th>Name</th><th>Goal</th><th>Default</th><th>Transasctions</th><th></th><th></th></tr>
 		</thead>
 		<tbody>
 		<?php
-		foreach ($wpdb->get_results("SELECT * FROM $this->table_name") as $row) {
+		$query = "SELECT cpg.*,(select count(amount) from $this->transaction_table where campaign_id = cpg.id) as transactions FROM $this->campaign_table as cpg";
+		foreach ($wpdb->get_results($query) as $row) {
 			?>
 			<tr>
 			<td><?php echo $row->id ?></td>
@@ -204,6 +207,7 @@ class KickgogoSettingsPage {
 				(<?php echo (int)(100 * $row->current / $row->goal) ?>%)
 			</td>
 			<td><?php echo $row->default_buy?></td>
+			<td><?php echo $row->transactions?></td>
 			<td>
 				<?php if (!$row->active):?>
 					<strong>inactive</strong>
@@ -314,7 +318,7 @@ class KickgogoSettingsPage {
 		if ($this->has_errors())
 			return;
 		
-		$wpdb->insert($this->table_name, [
+		$wpdb->insert($this->campaign_table, [
 			'name' => $name,
 			'goal' => $goal,
 			'default_buy' => $defbuy,
@@ -325,17 +329,17 @@ class KickgogoSettingsPage {
 	
 	public function handle_delete($id) {
 		global $wpdb;
-		$wpdb->delete($this->table_name, [ 'id' => $id ]);
+		$wpdb->delete($this->campaign_table, [ 'id' => $id ]);
 	}
 	
 	public function handle_enable($id) {
 		global $wpdb;
-		$wpdb->update($this->table_name, [ 'active' => 1 ], [ 'id' => $id ]);
+		$wpdb->update($this->campaign_table, [ 'active' => 1 ], [ 'id' => $id ]);
 	}
 	
 	public function handle_disable($id) {
 		global $wpdb;
-		$wpdb->update($this->table_name, [ 'active' => 0 ], [ 'id' => $id ]);
+		$wpdb->update($this->campaign_table, [ 'active' => 0 ], [ 'id' => $id ]);
 	}
 	
 	public function report_error($error) {
@@ -356,5 +360,34 @@ class KickgogoSettingsPage {
 	
 	public function getClubAPIURL() {
 		return get_option('kickgogo-club-api-url');
+	}
+	
+	public function getTransactionCount($name) {
+		global $wpdb;
+		$query = "select count(amount) from $this->transaction_table AS tr INNER JOIN $this->campaign_table AS cpg ON tr.campaign_id = cpg.id and cpg.name = '$name'";
+		return $wpdb->get_var($query);
+	}
+	
+	public function getCampaign($name) {
+		global $wpdb;
+		if (is_numeric($name)) {
+			$sql = "
+			SELECT * FROM $this->campaign_table
+			WHERE id = " . ((int)$name);
+		} else {
+			$sql = "
+			SELECT * FROM $this->campaign_table
+			WHERE name = '" . esc_sql($name) . "'";
+		}
+		$res = $wpdb->get_results($sql);
+		$campaign = current($res);
+		if (!$campaign)
+			return false;
+			$self = home_url(add_query_arg([]));
+			$campaign->success_langing_page = home_url('/kickgogo-handler/') . base64_encode(
+				$campaign->success_langing_page ?: $self);
+			$campaign->failure_landing_page = home_url('/kickgogo-handler/') . base64_encode(
+				$campaign->failure_landing_page ?: $campaign->success_langing_page);
+			return $campaign;
 	}
 }

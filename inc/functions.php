@@ -1,7 +1,7 @@
 <?php
 
 global $kickgogo_db_version;
-$kickgogo_db_version = '3';
+$kickgogo_db_version = '4';
 
 function kickgogo_install() {
 	global $kickgogo_db_version;
@@ -11,8 +11,9 @@ function kickgogo_install() {
 
 function kickgogo_create_table() {
 	global $wpdb;
-	$table_name = $wpdb->prefix . "_kickgogo_campaigns";
-	
+	require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
+
+	$table_name = $wpdb->prefix . "kickgogo_campaigns";
 	$charset_collate = $wpdb->get_charset_collate();
 	
 	$sql = "CREATE TABLE $table_name (
@@ -27,7 +28,16 @@ function kickgogo_create_table() {
 		PRIMARY KEY  (id)
 	) $charset_collate;";
 	
-	require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
+	dbDelta( $sql );
+
+	$table_name = $wpdb->prefix . "kickgogo_transactions";
+	$sql = "CREATE TABLE $table_name (
+		id int NOT NULL AUTO_INCREMENT,
+		campaign_id int NOT NULL,
+		amount decimal(12,2) NOT NULL,
+		PRIMARY KEY  (id)
+	) $charset_collate;";
+	
 	dbDelta( $sql );
 }
 
