@@ -3,6 +3,8 @@
 class KickgogoSettingsPage {
 	
 	private $pelepay_account;
+	private $club_login_page;
+	private $club_api_url;
 	private $errors = [];
 	private $table_name;
 	
@@ -18,7 +20,6 @@ class KickgogoSettingsPage {
 		add_action( 'admin_menu', array( $this, 'add_plugin_page' ) );
 		add_action( 'admin_init', array( $this, 'page_init' ) );
 	}
-	
 	
 	/**
 	 * Add options page
@@ -57,6 +58,16 @@ class KickgogoSettingsPage {
 			'kickgogo-pelepay-account' // Option name
 			);
 		
+		register_setting(
+			'kickgogo_setting_group', // Option group
+			'kickgogo-club-login-page' // Option name
+			);
+		
+		register_setting(
+			'kickgogo_setting_group', // Option group
+			'kickgogo-club-api-url' // Option name
+			);
+		
 		add_settings_section(
 			'kickgogo_section_global', // ID
 			'Global Settings', // Title
@@ -71,6 +82,22 @@ class KickgogoSettingsPage {
 			'kickgogo-settings', // Page
 			'kickgogo_section_global' // Section
 			);
+		
+		add_settings_field(
+			'club-login-page', // ID
+			'Club Login Page', // Title
+			array( $this, 'club_login_page_callback' ), // Callback
+			'kickgogo-settings', // Page
+			'kickgogo_section_global' // Section
+			);
+		
+		add_settings_field(
+			'club-api-url', // ID
+			'Club API Endpoint', // Title
+			array( $this, 'club_api_url_callback' ), // Callback
+			'kickgogo-settings', // Page
+			'kickgogo_section_global' // Section
+			);
 	}
 	
 	/**
@@ -80,6 +107,8 @@ class KickgogoSettingsPage {
 	{
 		// Set class property
 		$this->pelepay_account = get_option('kickgogo-pelepay-account');
+		$this->club_login_page = get_option('kickgogo-club-login-page');
+		$this->club_api_url = get_option('kickgogo-club-api-url');
 		?>
         <div class="wrap">
             <h2>Kickgogo Settings</h2>
@@ -109,8 +138,28 @@ class KickgogoSettingsPage {
 	 */
 	public function pelepay_account_callback() {
 		printf(
-			'<input type="text" id="pelepay-account" name="kickgogo-pelepay-account" value="%s" style="width: 20em;"/>',
+			'<input type="text" id="pelepay-account" name="kickgogo-pelepay-account" value="%s" style="width: 20em; direction: ltr;"/>',
 			isset( $this->pelepay_account ) ? esc_attr($this->pelepay_account) : ''
+			);
+	}
+	
+	/**
+	 * Print the club login page setting field
+	 */
+	public function club_login_page_callback() {
+		printf(
+			'<input type="text" id="club-login-page" name="kickgogo-club-login-page" value="%s" style="width: 20em; direction: ltr;"/>',
+			isset( $this->club_login_page ) ? esc_attr($this->club_login_page) : ''
+			);
+	}
+	
+	/**
+	 * Print the club API endpoint setting field
+	 */
+	public function club_api_url_callback() {
+		printf(
+			'<input type="text" id="club-api-url" name="kickgogo-club-api-url" value="%s" style="width: 20em; direction: ltr;"/>',
+			( !empty($this->club_api_url)) ? esc_attr($this->club_api_url) : 'http://api.roleplay.org.il'
 			);
 	}
 	
@@ -296,7 +345,16 @@ class KickgogoSettingsPage {
 	public function has_errors() {
 		return !empty($this->errors);
 	}
+	
+	public function getPelepayAccount() {
+		return get_option('kickgogo-pelepay-account');
+	}
+	
+	public function getClubLoginPage() {
+		return get_option('kickgogo-club-login-page');
+	}
+	
+	public function getClubAPIURL() {
+		return get_option('kickgogo-club-api-url');
+	}
 }
-
-if(is_admin())
-	$kickgogo_setting = new KickgogoSettingsPage();

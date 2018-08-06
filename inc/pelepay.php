@@ -27,8 +27,14 @@ class KickgogoPelepayProcessor {
 		<button class="kickgogo" type="submit"><?php echo $buttontext?></button>
 		</form>
 		<?php
+		if ($buttontext === true) {
+			?>
+			<script>
+			document.forms['pelepayform'].submit();
+			</script>
+			<?php
+		}
 		return ob_get_clean();
-		
 	}
 	
 	public function parse($result) {
