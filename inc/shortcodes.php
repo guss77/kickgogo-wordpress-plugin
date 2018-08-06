@@ -152,7 +152,6 @@ class KickgogoShortcodes {
 				$error = "Invalid campaign name";
 			} else {
 				$token = @file_get_contents($this->settings->getClubAPIURL() . "/club/email/$email");
-				var_dump($this->settings->getClubAPIURL() . "/club/email/$email");
 				if ($token === false) {
 					$error = "כתובת מועדון לא חוקית";
 				} else {
