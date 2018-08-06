@@ -16,6 +16,7 @@ class KickgogoShortcodes {
 		add_shortcode('kickgogo-status', [ $this, 'display_status' ]);
 		add_shortcode('kickgogo-amount', [ $this, 'display_amount' ]);
 		add_shortcode('kickgogo-percent', [ $this, 'display_percent' ]);
+		add_shortcode('kickgogo-progress', [ $this, 'display_progress' ]);
 		add_shortcode('kickgogo-club-login', [ $this, 'display_club_login' ]);
 	}
 	
@@ -66,6 +67,32 @@ class KickgogoShortcodes {
 			return "Invalid Kickgogo Campaign '{$atts['name']}'";
 		}
 		return min(100, (int)(100 * $campaign->current / $campaign->goal));
+	}
+	
+	public function display_progress($atts, $content = null) {
+		$atts = shortcode_atts([ 'name' => '' ], $atts, 'kickgogo-percent');
+		if (!($campaign = $this->get_campaign($atts['name']))) {
+			return "Invalid Kickgogo Campaign '{$atts['name']}'";
+		}
+		$percent = min(100, (int)(100 * $campaign->current / $campaign->goal));
+		if ($percent > 0)
+			$width = "{$percent}%";
+		else
+			$width = "3px";
+		
+		$hidein = $percent < 70 ? 'style="display: none;"' : '';
+		$hideout = $percent >= 70 ? 'style="display: none;"' : '';
+			
+		ob_start();
+		?><div class="kickgogo-progress-container"><?php
+			?><div class="kickgogo-progress-bar" style="width: <?php echo $width?>"><?php
+				?><div class="kickgogo-percent-progress-in" <?php echo $hidein?>><?php echo $percent?>%</div><?php
+			?></div><?php
+			?><div class="kickgogo-progress-buffer"><?php
+				?><div class="kickgogo-percent-progress-out" <?php echo $hideout?>><?php echo $percent?>%</div><?php
+			?></div><?php
+		?></div><?php
+		return ob_get_clean();
 	}
 	
 	public function display_status($atts, $content = null) {

@@ -3,7 +3,7 @@
  Plugin Name: KickGoGo
  Plugin URI:  http://github.com/guss77/kickgogo-wordpress-plugin
  Description: Crowd-funding campaign manager
- Version:     1.1.0
+ Version:     1.2.0
  Author:      Oded Arbel
  Author URI:  https://github.com/guss77/kickgogo-wordpress-plugin
  License:     GPL2
@@ -27,4 +27,5 @@ if (is_admin()) {
 } else {
 	$kickgogo_ref = new KickgogoShortcodes($kickgogo_setting);
 	add_action( 'parse_request', [ $kickgogo_ref, 'handle_callbacks']);
+	wp_enqueue_style( 'kickgogo_wp_default_css', plugins_url('inc/kickgogo-default.css', __FILE__) );
 }
