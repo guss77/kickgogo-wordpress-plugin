@@ -1,0 +1,23 @@
+.kickgogo-progress-container {
+	border: solid 1px black;
+	display: flex;
+}
+
+.kickgogo-progress-bar {
+	background: black;
+	min-height: 1em;
+}
+
+.kickgogo-percent-progress-in, .kickgogo-percent-progress-out {
+	white-space: nowrap;
+	margin: 0 0.3em;
+}
+
+.kickgogo-percent-progress-in {
+	text-align: left;
+	color: white;
+}
+
+.kickgogo-percent-progress-out {
+	color: black;
+}
