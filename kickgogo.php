@@ -30,3 +30,4 @@ if (is_admin()) {
 	add_action( 'parse_request', [ $kickgogo_ref, 'handle_callbacks']);
 	wp_enqueue_style( 'kickgogo_wp_default_css', plugins_url('inc/kickgogo-default.css', __FILE__) );
 }
+load_plugin_textdomain('kickgogo');
