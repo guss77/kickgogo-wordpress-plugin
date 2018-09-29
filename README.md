@@ -126,9 +126,17 @@ Use the `[kickgogo-progress]` short code to show the current progress of the cam
 
 The short code takes the following parameters:
 
- * `name` (**Required**) - Specify the name of the campaign for which to display the current percentage. Can also be the numeric ID of the campaign as shown in the campaign list. If this is not specified or an invalid value is specified, the short code will show an error message instead of the progress bar.
+ * `name` (**Required**) - Specify the name of the campaign for which to display the progress. Can also be the numeric ID of the campaign as shown in the campaign list. If this is not specified or an invalid value is specified, the short code will show an error message instead of the progress bar.
  
  Note that the progress bar only goes as far as %100 - if the campaign is over funded, the bar will still show 100%.
+
+#### Current Campaign Donation Count
+
+Use the `[kickgogo-payments]` short code to show the number of donations received so far.
+
+The short code takes the following parameters:
+
+ * `name` (**Required**) - Specify the name of the campaign for which to display the current donation count. Can also be the numeric ID of the campaign as shown in the campaign list. If this is not specified or an invalid value is specified, the short code will show an error message instead of the donation count.
 
 #### Club Login Page
 
