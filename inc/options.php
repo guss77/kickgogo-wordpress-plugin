@@ -430,18 +430,17 @@ class KickgogoSettingsPage {
 		</thead>
 		<tbody>
 		<?php foreach ($this->getTransactions($campaign->name) as $row):?>
-		<?php $rowdetails = json_decode($row->details ?: '{}');?>
 		<tr>
 			<td>
 				<?php echo $row->id?>
 				<?php if ($row->test):?><i title="Test transaction" class="fas fa-vial"></i><?php endif;?>
-				<?php if ($rowdetails->data and $rowdetails->data->club): ?><i title="Club member" class="fas fa-user-friends"></i><?php endif; ?>
+				<?php if (@$row->details->data->club): ?><i title="Club member: <?php echo $row->details->data->club; ?>" class="fas fa-user-friends"></i><?php endif; ?>
 			</td>
 			<td><?php echo $row->amount?></td>
-			<td><?php echo $rowdetails->name?></td>
-			<td><?php echo $rowdetails->email?></td>
-			<td><?php echo $rowdetails->confirmation?></td>
-			<td><?php echo $rowdetails->code?></td>
+			<td><?php echo @$row->details->name?></td>
+			<td><?php echo @$row->details->email?></td>
+			<td><?php echo @$row->details->confirmation?></td>
+			<td><?php echo @$row->details->code?></td>
 			<td>
 			<?php if ($row->test):?>
 			<i class="fas fa-trash" style="cursor: pointer;" onclick="deleteDonation(this);"></i>
@@ -614,12 +613,15 @@ class KickgogoSettingsPage {
 		return $wpdb->get_var($query) + 1;
 	}
 	
-	public function getTransactions($name) {
+	public function getTransactions($name) : \Iterator {
 		global $wpdb;
 		$query = "select tr.* from $this->transaction_table AS tr
 			INNER JOIN $this->campaign_table AS cpg ON tr.campaign_id = cpg.id and (cpg.name = '$name' or cpg.id = '$name')
 			WHERE tr.deleted = 0";
-		return $wpdb->get_results($query);
+		foreach ($wpdb->get_results($query) as $row) {
+			$row->details = $row->details ? json_decode($row->details) : null;
+			yield $row;
+		}
 	}
 	
 	public function deleteTransaction($name, $tid) {
