@@ -363,6 +363,9 @@ class KickgogoSettingsPage {
 			case 'delete-transaction':
 				$this->deleteTransaction($campaign->name, $_POST['transaction']);
 				break;
+			case 'add-donation':
+				$this->handle_add_transaction($campaign->id, $_POST);
+				break;
 		}
 		
 		?>
@@ -469,6 +472,43 @@ class KickgogoSettingsPage {
 			return true;
 		}
 		</script>
+		
+		<h3>Add Donation Record Manually</h3>
+		
+		<p>
+		Please note that this operation does not actually perform any payment - it will just insert a new donation record to the database. This is useful
+		if you wish to test the UI or record payments received by another payment processor (e.g. cash).
+		</p>
+		
+		<form method="post" action="<?php menu_page_url('kickgogo-campaign')?>&campaign-id=<?php echo $campaignId?>">
+		<input type="hidden" name="kickgogo-action" value="add-donation">
+		
+		<p>
+		<label>Amount: <input type="number" name="amount" value="<?php echo $campaign->default_buy?>"></label>
+		</p>
+		
+		<p>
+		<label>Name: <input type="text" name="name"></label> (optional)
+		</p>
+		
+		<p>
+		<label>E-mail: <input type="text" name="email"></label> (optional)
+		</p>
+		
+		<p>
+		<label>Phone: <input type="text" name="phone"></label> (optional)
+		</p>
+		
+		<p>
+		<label><input type="checkbox" name="test" value="1"> Test donation</label>
+		</p>
+		<div style="margin: 0; padding: 0"><small>(test donations count towards the total, but can be removed later)</small></div>
+		
+		<p>
+		<button type="submit">Add</button>
+		</p>
+
+		</form>
 		<?php
 	}
 	
@@ -499,7 +539,37 @@ class KickgogoSettingsPage {
 		return true;
 	}
 	
-	
+	public function handle_add_transaction($campaignId, $data) {
+		global $wpdb;
+		
+		if (!is_numeric($data['amount'])) {
+			$this->report_error('Missing donation amount!');
+		}
+		
+		if ($this->has_errors())
+			return false;
+		
+		$tid = $this->getNextTransactionId();
+		$details = json_encode([
+			'amount' => $data['amount'],
+			'campaign' => $campaignId,
+			'confirmation' => "manual-$tid",
+			'code' => $tid,
+			'name' => @$data['name'],
+			'email' => @$data['email'],
+			'phone' => @$data['phone'],
+			'orderid' => "manual-$tid",
+			'test' => @$data['test'] ? true : false
+			]);
+		
+		$wpdb->insert($this->transaction_table, [
+			'campaign_id' => $campaignId,
+			'amount' => $data['amount'],
+			'test' => @$data['test'] ? 1 : 0,
+			'details' => $details,
+		]);
+		return true;
+	}
 	
 	public function report_error($error) {
 		$this->errors[] = $error;
@@ -532,15 +602,21 @@ class KickgogoSettingsPage {
 	public function getTransactionCount($name) {
 		global $wpdb;
 		$query = "select count(amount) from $this->transaction_table AS tr
-			INNER JOIN $this->campaign_table AS cpg ON tr.campaign_id = cpg.id and cpg.name = '$name'
+			INNER JOIN $this->campaign_table AS cpg ON tr.campaign_id = cpg.id and (cpg.name = '$name' or cpg.id = '$name')
 			WHERE tr.deleted = 0";
 		return $wpdb->get_var($query);
+	}
+	
+	public function getNextTransactionId() {
+		global $wpdb;
+		$query = "select MAX(id) from $this->transaction_table";
+		return $wpdb->get_var($query) + 1;
 	}
 	
 	public function getTransactions($name) {
 		global $wpdb;
 		$query = "select tr.* from $this->transaction_table AS tr
-			INNER JOIN $this->campaign_table AS cpg ON tr.campaign_id = cpg.id and cpg.name = '$name'
+			INNER JOIN $this->campaign_table AS cpg ON tr.campaign_id = cpg.id and (cpg.name = '$name' or cpg.id = '$name')
 			WHERE tr.deleted = 0";
 		return $wpdb->get_results($query);
 	}
