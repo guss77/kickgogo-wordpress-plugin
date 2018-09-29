@@ -65,7 +65,7 @@ class KickgogoShortcodes {
 		if (!($campaign = $this->settings->getCampaign($atts['name']))) {
 			return "Invalid Kickgogo Campaign '{$atts['name']}'";
 		}
-		return min(100, (int)(100 * $campaign->current / $campaign->goal));
+		return min(100, ceil(100 * $campaign->current / $campaign->goal));
 	}
 	
 	public function display_progress($atts, $content = null) {
@@ -73,7 +73,7 @@ class KickgogoShortcodes {
 		if (!($campaign = $this->settings->getCampaign($atts['name']))) {
 			return "Invalid Kickgogo Campaign '{$atts['name']}'";
 		}
-		$percent = min(100, (int)(100 * $campaign->current / $campaign->goal));
+		$percent = min(100, ceil(100 * $campaign->current / $campaign->goal));
 		if ($percent > 0)
 			$width = "{$percent}%";
 			else
@@ -109,7 +109,7 @@ class KickgogoShortcodes {
 		}
 		return sprintf($content ?: "%d of %d (%d%%)",
 			$campaign->current, $campaign->goal,
-			(int)(100 * $campaign->current / $campaign->goal));
+			ceil(100 * $campaign->current / $campaign->goal));
 	}
 	
 	private function update_campaign($id, $amount, $details, $test = false) {
