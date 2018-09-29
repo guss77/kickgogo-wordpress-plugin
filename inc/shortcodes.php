@@ -6,7 +6,6 @@ class KickgogoShortcodes {
 	private $settings;
 	
 	public function __construct(KickgogoSettingsPage $settings) {
-		global $wpdb;
 		$this->settings = $settings;
 		$this->processor = new KickgogoPelepayProcessor($this->settings->getPelepayAccount());
 		add_shortcode('kickgogo', [ $this, 'pay_form' ]);
@@ -29,12 +28,12 @@ class KickgogoShortcodes {
 		$content = $content ?: 'Donate';
 		
 		if (!($campaign = $this->settings->getCampaign($atts['name']))) {
-			return "Invalid Kickgogo Campaign '{$atts['name']}'";
+			return __("Invalid Kickgogo Campaign", 'kickgogo'). " {$atts['name']}'";
 		}
 		
 		$amount = (int)($atts['amount'] ?: $campaign->default_buy);
 		if ($amount <= 0)
-			return "Invalid purchase amount";
+			return __("Invalid purchase amount", 'kickgogo');
 		
 		if ($checkClub)
 			return $this->getClubForm($content, $amount, $atts['name']);
@@ -47,7 +46,7 @@ class KickgogoShortcodes {
 	public function display_goal($atts, $content = null) {
 		$atts = shortcode_atts([ 'name' => '' ], $atts, 'kickgogo-goal');
 		if (!($campaign = $this->settings->getCampaign($atts['name']))) {
-			return "Invalid Kickgogo Campaign '{$atts['name']}'";
+			return __("Invalid Kickgogo Campaign", 'kickgogo'). " '{$atts['name']}'";
 		}
 		return $campaign->goal;
 	}
@@ -55,7 +54,7 @@ class KickgogoShortcodes {
 	public function display_amount($atts, $content = null) {
 		$atts = shortcode_atts([ 'name' => '' ], $atts, 'kickgogo-amount');
 		if (!($campaign = $this->settings->getCampaign($atts['name']))) {
-			return "Invalid Kickgogo Campaign '{$atts['name']}'";
+			return __("Invalid Kickgogo Campaign", 'kickgogo') . " '{$atts['name']}'";
 		}
 		return $campaign->current;
 	}
@@ -63,7 +62,7 @@ class KickgogoShortcodes {
 	public function display_percent($atts, $content = null) {
 		$atts = shortcode_atts([ 'name' => '' ], $atts, 'kickgogo-percent');
 		if (!($campaign = $this->settings->getCampaign($atts['name']))) {
-			return "Invalid Kickgogo Campaign '{$atts['name']}'";
+			return __("Invalid Kickgogo Campaign", 'kickgogo') . " '{$atts['name']}'";
 		}
 		return min(100, ceil(100 * $campaign->current / $campaign->goal));
 	}
@@ -71,7 +70,7 @@ class KickgogoShortcodes {
 	public function display_progress($atts, $content = null) {
 		$atts = shortcode_atts([ 'name' => '' ], $atts, 'kickgogo-percent');
 		if (!($campaign = $this->settings->getCampaign($atts['name']))) {
-			return "Invalid Kickgogo Campaign '{$atts['name']}'";
+			return __("Invalid Kickgogo Campaign", 'kickgogo') . " '{$atts['name']}'";
 		}
 		$percent = min(100, ceil(100 * $campaign->current / $campaign->goal));
 		if ($percent > 0)
@@ -96,8 +95,8 @@ class KickgogoShortcodes {
 	
 	public function display_payments($atts, $content = null) {
 		$atts = shortcode_atts([ 'name' => '' ], $atts, 'kickgogo-percent');
-		if (!($campaign = $this->settings->getCampaign($atts['name']))) {
-			return "Invalid Kickgogo Campaign '{$atts['name']}'";
+		if (!($this->settings->getCampaign($atts['name']))) {
+			return __("Invalid Kickgogo Campaign", 'kickgogo') . " '{$atts['name']}'";
 		}
 		return $this->settings->getTransactionCount($atts['name']);
 	}
@@ -105,7 +104,7 @@ class KickgogoShortcodes {
 	public function display_status($atts, $content = null) {
 		$atts = shortcode_atts([ 'name' => '' ], $atts, 'kickgogo-status');
 		if (!($campaign = $this->settings->getCampaign($atts['name']))) {
-			return "Invalid Kickgogo Campaign '{$atts['name']}'";
+			return __("Invalid Kickgogo Campaign", 'kickgogo') . " '{$atts['name']}'";
 		}
 		return sprintf($content ?: "%d of %d (%d%%)",
 			$campaign->current, $campaign->goal,
@@ -183,17 +182,17 @@ class KickgogoShortcodes {
 	private function sendClubPayment($campaignName, $email, $amount) {
 		$campaign = $this->settings->getCampaign($campaignName);
 		if (!$campaign) {
-			throw new Exception("Invalid campaign name");
+			throw new Exception(__("Invalid Kickgogo Campaign", 'kickgogo'));
 		}
 		
 		$token = @file_get_contents($this->settings->getClubAPIURL() . "/club/email/$email");
 		if ($token === false) {
-			throw new Exception("Invalid club address");
+			throw new Exception(__("Invalid club address", 'kickgogo'));
 		}
 		
 		$resp = json_decode($token);
 		if (!$resp->status) {
-			throw new Exception("Invalid club membership");
+			throw new Exception(__("Invalid club membership", 'kickgogo'));
 		}
 		
 		foreach ($this->settings->getTransactions($campaignName) as $t) {
@@ -202,7 +201,7 @@ class KickgogoShortcodes {
 				if (!$validate) continue;
 				$validate = json_decode($validate);
 				if (trim($validate->email) == trim($t->details->email))
-					throw new Exception("Club membership may only be used once");
+					throw new Exception(__("Club membership may only be used once", 'kickgogo'));
 			}
 		}
 		
