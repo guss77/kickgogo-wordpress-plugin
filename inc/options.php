@@ -426,7 +426,10 @@ class KickgogoSettingsPage {
 		<?php foreach ($this->getTransactions($campaign->name) as $row):?>
 		<?php $rowdetails = json_decode($row->details ?: '{}');?>
 		<tr>
-			<td><?php echo $row->id?></td>
+			<td>
+				<?php echo $row->id?>
+				<?php if ($row->test):?><i title="Test transaction" class="fas fa-vial"></i><?php endif;?>
+			</td>
 			<td><?php echo $row->amount?></td>
 			<td><?php echo $rowdetails->name?></td>
 			<td><?php echo $rowdetails->email?></td>
@@ -500,7 +503,7 @@ class KickgogoSettingsPage {
 		global $wpdb;
 		$query = "select count(amount) from $this->transaction_table AS tr
 			INNER JOIN $this->campaign_table AS cpg ON tr.campaign_id = cpg.id and cpg.name = '$name'
-			WHERE tr.deleted == 0";
+			WHERE tr.deleted = 0";
 		return $wpdb->get_var($query);
 	}
 	
@@ -508,7 +511,7 @@ class KickgogoSettingsPage {
 		global $wpdb;
 		$query = "select tr.* from $this->transaction_table AS tr
 			INNER JOIN $this->campaign_table AS cpg ON tr.campaign_id = cpg.id and cpg.name = '$name'
-			WHERE tr.deleted == 0";
+			WHERE tr.deleted = 0";
 		return $wpdb->get_results($query);
 	}
 	
