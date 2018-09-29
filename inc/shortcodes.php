@@ -163,11 +163,16 @@ class KickgogoShortcodes {
 			} else {
 				$token = @file_get_contents($this->settings->getClubAPIURL() . "/club/email/$email");
 				if ($token === false) {
-					$error = "כתובת מועדון לא חוקית";
+					$error = "Invalid club address";
 				} else {
-					return $this->processor->get_form(true, $amount, $campaign->name,
-						$campaign->id, $campaign->success_langing_page,
-						$campaign->failure_landing_page);
+					$resp = json_decode($token);
+					if (!$resp->status) {
+						$error = "Invalid club membership";
+					} else {
+						return $this->processor->get_form(true, $amount, $campaign->name,
+							$campaign->id, $campaign->success_langing_page,
+							$campaign->failure_landing_page, [ "club" => $resp->token ]);
+					}
 				}
 			}
 		}
