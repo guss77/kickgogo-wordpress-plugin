@@ -118,6 +118,11 @@ class KickgogoShortcodes {
 			return false;
 		}
 		global $wpdb;
+		
+		$transactions = $this->settings->getTransactionsTable();
+		$wpdb->query($wpdb->preapre(
+			"INSERT INTO $transactions (campaign_id, amount) VALUES (%d, %d);", $id, $fund));
+		
 		$campaigns = $this->settings->getCampaignTable();
 		$wpdb->query($wpdb->prepare(
 			"UPDATE $campaigns
