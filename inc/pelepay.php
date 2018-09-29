@@ -54,6 +54,7 @@ class KickgogoPelepayProcessor {
 				'email' => $result['email'],
 				'phone' => $result['phone'],
 				'orderid' => $result['orderid'],
+				'test' => ($result['index'][0] == 'T')
 			];
 		}
 		

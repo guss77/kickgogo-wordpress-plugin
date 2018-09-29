@@ -1,7 +1,7 @@
 <?php
 
 global $kickgogo_db_version;
-$kickgogo_db_version = '5';
+$kickgogo_db_version = '6';
 
 class KickgogoAdmin {
 	
@@ -44,6 +44,8 @@ class KickgogoAdmin {
 			campaign_id int NOT NULL,
 			amount decimal(12,2) NOT NULL,
 			details TEXT DEFAULT NULL,
+			test BOOLEAN DEFAULT 0,
+			deleted BOOLEAN DEFAULT 0,
 			PRIMARY KEY  (id)
 		) $charset_collate;";
 		
@@ -62,11 +64,15 @@ class KickgogoAdmin {
 	
 	function kickgogo_custom_wp_admin_style($hook) {
 		// Load only on ?page=mypluginname
-		if($hook != 'toplevel_page_kickgogo') {
-			return;
+		switch ($hook) {
+			case 'toplevel_page_kickgogo':
+			case 'kickgogo_page_kickgogo-campaign':
+				break;
+			default:
+				return;
 		}
 		wp_enqueue_style( 'kickgogo_wp_admin_css', plugins_url('admin-style.css', __FILE__) );
-		wp_enqueue_style( 'kickgogo_wp_admin_fa', 'https://use.fontawesome.com/releases/v5.0.10/css/all.css' );
+		wp_enqueue_style( 'kickgogo_wp_admin_fa', 'https://use.fontawesome.com/releases/v5.3.0/css/all.css' );
 	}
 
 }
