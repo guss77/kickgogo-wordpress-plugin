@@ -2,14 +2,12 @@
 
 class KickgogoShortcodes {
 	
-	private $table_name;
 	private $processor;
 	private $settings;
 	
 	public function __construct(KickgogoSettingsPage $settings) {
 		global $wpdb;
 		$this->settings = $settings;
-		$this->table_name = $wpdb->prefix . "_kickgogo_campaigns";
 		$this->processor = new KickgogoPelepayProcessor($this->settings->getPelepayAccount());
 		add_shortcode('kickgogo', [ $this, 'pay_form' ]);
 		add_shortcode('kickgogo-goal', [ $this, 'display_goal' ]);
@@ -114,13 +112,24 @@ class KickgogoShortcodes {
 			(int)(100 * $campaign->current / $campaign->goal));
 	}
 	
-	private function update_campaign($id, $amount) {
+	private function update_campaign($id, $amount, $details) {
+		$fund = (int)$amount;
+		if ($fund <= 0) {
+			return false;
+		}
 		global $wpdb;
+		
+		$transactions = $this->settings->getTransactionsTable();
 		$wpdb->query($wpdb->prepare(
-			"UPDATE $this->table_name
-			SET current = current + %s
+			"INSERT INTO $transactions (campaign_id, amount, details) VALUES (%d, %d, %s);", $id, $fund, $details));
+		
+		$campaigns = $this->settings->getCampaignTable();
+		$wpdb->query($wpdb->prepare(
+			"UPDATE $campaigns
+			SET current = current + %d
 			WHERE id = %d",
-			$amount, $id));
+			$fund, $id));
+		return true;
 	}
 	
 	private function getClubForm($buttonText, $amount, $campaign) {
@@ -188,8 +197,7 @@ class KickgogoShortcodes {
 		$orig = base64_decode($code);
 		
 		$result = $this->processor->parse(wp_parse_args($query));
-		if ($result) {
-			$this->update_campaign($result['campaign'], $result['amount']);
+		if ($result and $this->update_campaign($result['campaign'], $result['amount'], json_encode($result))) {
 			$orig = add_query_arg(['kickgogo' => 'success'], $orig);
 		} else {
 			$orig = add_query_arg(['kickgogo' => 'failure'], $orig);

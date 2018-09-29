@@ -4,7 +4,7 @@
 - Requires at least: 4.8.0
 - Tested up to: 4.9.8
 - Requires PHP: 7.0.0
-- Stable tag: 1.3.1
+- Stable tag: 1.4.0
 - License: GPLv2
 - License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -69,7 +69,7 @@ The short code takes the following parameters:
 
  * `name` (**Required**) - Specify the name of the campaign this button will apply to. Can also be the numeric ID of the campaign as shown in the campaign list. If this is not specified or an invalid value is specified, the short code will show an error message instead of the button.
  * `amount` (Optional) - Specify the amount to be payed into the campaign. If this is not specified, then the default pay amount set on the campaign will be used instead. If this is not specified and the campaign has no default amount set, the short code will show an error message instead of the button.
- * `club` (Optional) - set to "yes" (or actually, any text) to allow this funding amount only for club members. Set the Club Page option as well as the Club API Endpoint for club membership check to work.
+ * `club` (Optional) - set to "yes" (or actually, any text) to allow this funding amount only for club members. For this to work you'd need to create a Club Loging page, set its permalink in the Kickgogo option "Club Login Page" and also set the Club API Endpoint. See the documentation in the `[kickgogo-club-login]` shortcode for more details.
 The shortcode also requires content which will be used as the text on the payment button. If no content is specified, the default text "Donate" is shown instead.
 
 Example:
@@ -120,3 +120,31 @@ The short code takes the following parameters:
 
 Note that if the campaign funding passes the goal, the value shown will be higher than 100%.
 
+#### Current Campaign Funding Progress Bar
+
+Use the `[kickgogo-progress]` short code to show the current progress of the campaign as a progress bar.
+
+The short code takes the following parameters:
+
+ * `name` (**Required**) - Specify the name of the campaign for which to display the progress. Can also be the numeric ID of the campaign as shown in the campaign list. If this is not specified or an invalid value is specified, the short code will show an error message instead of the progress bar.
+ 
+ Note that the progress bar only goes as far as %100 - if the campaign is over funded, the bar will still show 100%.
+
+#### Current Campaign Donation Count
+
+Use the `[kickgogo-payments]` short code to show the number of donations received so far.
+
+The short code takes the following parameters:
+
+ * `name` (**Required**) - Specify the name of the campaign for which to display the current donation count. Can also be the numeric ID of the campaign as shown in the campaign list. If this is not specified or an invalid value is specified, the short code will show an error message instead of the donation count.
+
+#### Club Login Page
+
+Use the `[kickgogo-club-login]` short code to create a club login form. This is needed to support the `club` attribute of the main `[kickgogo]` shortcode.
+
+This shortcode must be used on a different page than the compaign pages as the login only works when moving between pages. To set it up:
+
+1. Create a new page for the club login.
+2. Add into it the `[kickgogo-club-login]` shortcode.
+3. Add any additional text and styling you want, or customize the permalink.
+4. Copy the permalink path (the URL shown under the page title, without the host name - everything after and including the first slash) and set it in the Kickgogo option Club Login Page.

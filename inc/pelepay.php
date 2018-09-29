@@ -48,6 +48,12 @@ class KickgogoPelepayProcessor {
 			return [
 				'amount' => $result['amount'],
 				'campaign' => $cpgid,
+				'confirmation' => $result['ConfirmationCode'],
+				'code' => $result['index'],
+				'name' => $result['firstname'] . ' ' . $result['lastname'],
+				'email' => $result['email'],
+				'phone' => $result['phone'],
+				'orderid' => $result['orderid'],
 			];
 		}
 		
