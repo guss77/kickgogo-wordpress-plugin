@@ -1,7 +1,7 @@
 <?php
 
 global $kickgogo_db_version;
-$kickgogo_db_version = '5';
+$kickgogo_db_version = '6';
 
 class KickgogoAdmin {
 	
@@ -44,6 +44,8 @@ class KickgogoAdmin {
 			campaign_id int NOT NULL,
 			amount decimal(12,2) NOT NULL,
 			details TEXT DEFAULT NULL,
+			test BOOLEAN DEFAULT 0,
+			deleted BOOLEAN DEFAULT 0,
 			PRIMARY KEY  (id)
 		) $charset_collate;";
 		
