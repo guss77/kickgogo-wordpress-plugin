@@ -115,12 +115,17 @@ class KickgogoShortcodes {
 	}
 	
 	private function update_campaign($id, $amount) {
+		$fund = (int)$amount;
+		if ($fund <= 0) {
+			return false;
+		}
 		global $wpdb;
 		$wpdb->query($wpdb->prepare(
 			"UPDATE $this->table_name
-			SET current = current + %s
+			SET current = current + %d
 			WHERE id = %d",
-			$amount, $id));
+			$fund, $id));
+		return true;
 	}
 	
 	private function getClubForm($buttonText, $amount, $campaign) {
@@ -188,8 +193,7 @@ class KickgogoShortcodes {
 		$orig = base64_decode($code);
 		
 		$result = $this->processor->parse(wp_parse_args($query));
-		if ($result) {
-			$this->update_campaign($result['campaign'], $result['amount']);
+		if ($result and $this->update_campaign($result['campaign'], $result['amount'])) {
 			$orig = add_query_arg(['kickgogo' => 'success'], $orig);
 		} else {
 			$orig = add_query_arg(['kickgogo' => 'failure'], $orig);
