@@ -120,6 +120,16 @@ The short code takes the following parameters:
 
 Note that if the campaign funding passes the goal, the value shown will be higher than 100%.
 
+#### Current Campaign Funding Progress Bar
+
+Use the `[kickgogo-progress]` short code to show the current progress of the campaign as a progress bar.
+
+The short code takes the following parameters:
+
+ * `name` (**Required**) - Specify the name of the campaign for which to display the current percentage. Can also be the numeric ID of the campaign as shown in the campaign list. If this is not specified or an invalid value is specified, the short code will show an error message instead of the progress bar.
+ 
+ Note that the progress bar only goes as far as %100 - if the campaign is over funded, the bar will still show 100%.
+
 #### Club Login Page
 
 Use the `[kickgogo-club-login]` short code to create a club login form. This is needed to support the `club` attribute of the main `[kickgogo]` shortcode.
