@@ -564,7 +564,7 @@ class KickgogoSettingsPage {
 				cpg.id, cpg.name, cpg.active, cpg.goal, cpg.default_buy,
 				cpg.success_langing_page, cpg.failure_landing_page,
 				SUM(tr.amount) as current ,COUNT(tr.id) as transactions FROM $this->campaign_table as cpg
-			INNER JOIN $this->transaction_table as tr ON tr.campaign_id = cpg.id and tr.deleted = 0
+			LEFT JOIN $this->transaction_table as tr ON tr.campaign_id = cpg.id and tr.deleted = 0
 			WHERE $where
 			GROUP BY cpg.id;
 		";
@@ -589,7 +589,7 @@ class KickgogoSettingsPage {
 				cpg.id, cpg.name, cpg.active, cpg.goal, cpg.default_buy,
 				cpg.success_langing_page, cpg.failure_landing_page,
 				SUM(tr.amount) as current ,COUNT(tr.id) as transactions FROM $this->campaign_table as cpg
-			INNER JOIN $this->transaction_table as tr ON tr.campaign_id = cpg.id and tr.deleted = 0
+			LEFT JOIN $this->transaction_table as tr ON tr.campaign_id = cpg.id and tr.deleted = 0
 			GROUP BY cpg.id;
 		";
 		return $wpdb->get_results($query);
