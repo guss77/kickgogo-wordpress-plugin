@@ -498,13 +498,17 @@ class KickgogoSettingsPage {
 	
 	public function getTransactionCount($name) {
 		global $wpdb;
-		$query = "select count(amount) from $this->transaction_table AS tr INNER JOIN $this->campaign_table AS cpg ON tr.campaign_id = cpg.id and cpg.name = '$name'";
+		$query = "select count(amount) from $this->transaction_table AS tr
+			INNER JOIN $this->campaign_table AS cpg ON tr.campaign_id = cpg.id and cpg.name = '$name'
+			WHERE tr.deleted == 0";
 		return $wpdb->get_var($query);
 	}
 	
 	public function getTransactions($name) {
 		global $wpdb;
-		$query = "select tr.* from $this->transaction_table AS tr INNER JOIN $this->campaign_table AS cpg ON tr.campaign_id = cpg.id and cpg.name = '$name'";
+		$query = "select tr.* from $this->transaction_table AS tr
+			INNER JOIN $this->campaign_table AS cpg ON tr.campaign_id = cpg.id and cpg.name = '$name'
+			WHERE tr.deleted == 0";
 		return $wpdb->get_results($query);
 	}
 	
