@@ -112,7 +112,7 @@ class KickgogoShortcodes {
 			(int)(100 * $campaign->current / $campaign->goal));
 	}
 	
-	private function update_campaign($id, $amount) {
+	private function update_campaign($id, $amount, $details) {
 		$fund = (int)$amount;
 		if ($fund <= 0) {
 			return false;
@@ -121,7 +121,7 @@ class KickgogoShortcodes {
 		
 		$transactions = $this->settings->getTransactionsTable();
 		$wpdb->query($wpdb->prepare(
-			"INSERT INTO $transactions (campaign_id, amount) VALUES (%d, %d);", $id, $fund));
+			"INSERT INTO $transactions (campaign_id, amount, details) VALUES (%d, %d, %s);", $id, $fund, $details));
 		
 		$campaigns = $this->settings->getCampaignTable();
 		$wpdb->query($wpdb->prepare(
@@ -197,7 +197,7 @@ class KickgogoShortcodes {
 		$orig = base64_decode($code);
 		
 		$result = $this->processor->parse(wp_parse_args($query));
-		if ($result and $this->update_campaign($result['campaign'], $result['amount'])) {
+		if ($result and $this->update_campaign($result['campaign'], $result['amount'], json_encode($result))) {
 			$orig = add_query_arg(['kickgogo' => 'success'], $orig);
 		} else {
 			$orig = add_query_arg(['kickgogo' => 'failure'], $orig);

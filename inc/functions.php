@@ -1,7 +1,7 @@
 <?php
 
 global $kickgogo_db_version;
-$kickgogo_db_version = '4';
+$kickgogo_db_version = '5';
 
 class KickgogoAdmin {
 	
@@ -43,9 +43,11 @@ class KickgogoAdmin {
 			id int NOT NULL AUTO_INCREMENT,
 			campaign_id int NOT NULL,
 			amount decimal(12,2) NOT NULL,
+			details TEXT DEFAULT NULL,
 			PRIMARY KEY  (id)
 		) $charset_collate;";
 		
+		error_log("debug: updating DB");
 		dbDelta( $sql );
 	}
 	

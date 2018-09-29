@@ -40,13 +40,8 @@ class KickgogoSettingsPage {
 		add_menu_page( 'Kickgogo', 'Kickgogo', 'manage_options',
 			'kickgogo', [$this, 'management_page' ], static::KICK_ICON);
 		
-// 		add_submenu_page(
-// 			'Kickgogo Campaigns',
-// 			'Kickgogo',
-// 			'manage_options',
-// 			'kickgogo-campaigns',
-// 			[ $this, 'campaign_builder' ]
-// 			);
+ 		add_submenu_page( 'kickgogo', 'Kickgogo Campaigns', 'Campaigns',
+ 			'manage_options', 'kickgogo-campaign', [ $this, 'campaign_viewer' ]);
 	}
 	
 	
@@ -184,6 +179,9 @@ class KickgogoSettingsPage {
 				case 'disable':
 					$this->handle_disable($_POST['id']);
 					break;
+				case 'details':
+					wp_redirect('/kickgogo-campaigns?campaign-id=' . $_POST['id']);
+					exit;
 			}
 					
 		?>
@@ -200,7 +198,7 @@ class KickgogoSettingsPage {
 			?>
 			<tr>
 			<td><?php echo $row->id ?></td>
-			<td><?php echo $row->name ?></td>
+			<td><a href="<?php menu_page_url('kickgogo-campaign')?>&campaign-id=<?php echo $row->id?>"><?php echo $row->name ?></a></td>
 			<td dir="ltr">
 				<?php echo (int)$row->current ?>
 				of <?php echo (int)$row->goal ?>
@@ -316,7 +314,7 @@ class KickgogoSettingsPage {
 		$land_err = $data['kickgogo-campaign-err'];
 		
 		if ($this->has_errors())
-			return;
+			return false;
 		
 		$wpdb->insert($this->campaign_table, [
 			'name' => $name,
@@ -325,6 +323,7 @@ class KickgogoSettingsPage {
 			'success_langing_page' => $land_ok,
 			'failure_landing_page' => $land_err,
 		]);
+		return true;
 	}
 	
 	public function handle_delete($id) {
@@ -341,6 +340,133 @@ class KickgogoSettingsPage {
 		global $wpdb;
 		$wpdb->update($this->campaign_table, [ 'active' => 0 ], [ 'id' => $id ]);
 	}
+	
+	public function campaign_viewer() {
+		if (!is_numeric($campaignId = @$_REQUEST['campaign-id'])) {
+			?>
+			<h3>Please select a campaign in the Kickgogo main campaign list</h3>
+			<?php
+			return;
+		}
+		
+		switch (@$_REQUEST['kickgogo-action']) {
+			case 'update':
+				if ($this->handle_update($campaignId, $_POST)) {
+					?>
+					<script>
+					window.location.href = '<?php echo menu_page_url('kickgogo', false);?>';
+					</script>
+					<?php
+					exit;
+				}
+		}
+		
+		$campaign = $this->getCampaign($campaignId);
+		?>
+		<h1>Campaign: <?php echo $campaign->name ?></h1>
+		
+		<?php if ($this->has_errors()): ?>
+			<div class="error fade">
+			<p><strong>Can't update campaign:</strong></p>
+			<?php foreach ($this->errors as $error):?>
+			<p><?php echo $error;?></p>
+			<?php endforeach;?>
+			</div>
+		<?php endif; ?>
+		
+		
+		<form method="post" action="<?php menu_page_url('kickgogo-campaign')?>&campaign-id=<?php echo $campaignId?>">
+		<input type="hidden" name="kickgogo-action" value="update">
+		<p>
+		<label for="kickgogo-campaign-goal">Goal:</label>
+		</p>
+		<p>
+		<input type="number" id="kickgogo-campaign-goal" name="kickgogo-campaign-goal" min="0" value="<?php echo $campaign->goal?>">
+		</p>
+		<p>
+		<label for="kickgogo-campaign-goal">Default purchase amount:</label>
+		</p>
+		<p>
+		<input type="number" id="kickgogo-campaign-defbuy" name="kickgogo-campaign-defbuy" min="0" value="<?php echo $campaign->default_buy?>">
+		</p>
+		<p>
+		(Optional, if not set the amount has to be specified for every Kickgogo button)
+		</p>
+		<p>
+		<label for="kickgogo-campaign-ok">Success langing page:</label>
+		</p>
+		<p>
+		<input type="text" id="kickgogo-campaign-ok" name="kickgogo-campaign-ok" value="<?php echo $campaign->success_page?>">
+		</p>
+		<p>
+		(leave empty to return the user to the page with the Kickgogo form)
+		</p>
+		<p>
+		<label for="kickgogo-campaign-err">Error langing page:</label>
+		</p>
+		<p>
+		<input type="text" id="kickgogo-campaign-err" name="kickgogo-campaign-err" value="<?php echo $campaign->failure_page?>">
+		</p>
+		<p>
+		(leave empty to return the user to the success page in case of an error)
+		</p>
+		<p>
+		<button type="submit">Update Campaign</button>
+		</p>
+		</form>
+		
+		<h2>Donations</h2>
+		<table class="widefat">
+		<thead>
+		<tr>
+		<th>#</th><th>Amount</th><th>Name</th><th>E-mail</th><th>Confirmation #</th><th>Transaction #</th>
+		</tr>
+		</thead>
+		<tbody>
+		<?php foreach ($this->getTransactions($campaign->name) as $row):?>
+		<?php $rowdetails = json_decode($row->details ?: '{}');?>
+		<tr>
+			<td><?php echo $row->id?></td>
+			<td><?php echo $row->amount?></td>
+			<td><?php echo $rowdetails->name?></td>
+			<td><?php echo $rowdetails->email?></td>
+			<td><?php echo $rowdetails->confirmation?></td>
+			<td><?php echo $rowdetails->code?></td>
+		</tr>
+		<?php endforeach;?>
+		</tbody>
+		</table>
+		<?php
+	}
+	
+	public function handle_update($campaignId, $data) {
+		global $wpdb;
+		
+		if (!is_numeric($data['kickgogo-campaign-goal'])) {
+			$this->report_error('Missing campaign goal');
+		} else {
+			$goal = (int)$data['kickgogo-campaign-goal'];
+			if ($goal <= 0)
+				$this->report_error('Campaign goal must be larger than zero');
+		}
+		$defbuy = (int)$data['kickgogo-campaign-defbuy'];
+		$land_ok = $data['kickgogo-campaign-ok'];
+		$land_err = $data['kickgogo-campaign-err'];
+		
+		if ($this->has_errors())
+			return false;
+		
+		$wpdb->update($this->campaign_table, [
+			'goal' => $goal,
+			'default_buy' => $defbuy,
+			'success_langing_page' => $land_ok,
+			'failure_landing_page' => $land_err,
+		], [ 'id' => $campaignId ]);
+		
+		return true;
+	}
+	
+	
 	
 	public function report_error($error) {
 		$this->errors[] = $error;
@@ -376,6 +502,12 @@ class KickgogoSettingsPage {
 		return $wpdb->get_var($query);
 	}
 	
+	public function getTransactions($name) {
+		global $wpdb;
+		$query = "select tr.* from $this->transaction_table AS tr INNER JOIN $this->campaign_table AS cpg ON tr.campaign_id = cpg.id and cpg.name = '$name'";
+		return $wpdb->get_results($query);
+	}
+	
 	public function getCampaign($name) {
 		global $wpdb;
 		if (is_numeric($name)) {
@@ -391,11 +523,13 @@ class KickgogoSettingsPage {
 		$campaign = current($res);
 		if (!$campaign)
 			return false;
-			$self = home_url(add_query_arg([]));
-			$campaign->success_langing_page = home_url('/kickgogo-handler/') . base64_encode(
-				$campaign->success_langing_page ?: $self);
-			$campaign->failure_landing_page = home_url('/kickgogo-handler/') . base64_encode(
-				$campaign->failure_landing_page ?: $campaign->success_langing_page);
-			return $campaign;
+		$self = home_url(add_query_arg([]));
+		$campaign->success_page = $campaign->success_langing_page;
+		$campaign->failure_page = $campaign->failure_landing_page;
+		$campaign->success_langing_page = home_url('/kickgogo-handler/') . base64_encode(
+			$campaign->success_langing_page ?: $self);
+		$campaign->failure_landing_page = home_url('/kickgogo-handler/') . base64_encode(
+			$campaign->failure_landing_page ?: $campaign->success_langing_page);
+		return $campaign;
 	}
 }
