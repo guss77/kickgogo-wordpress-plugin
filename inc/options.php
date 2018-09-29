@@ -193,8 +193,7 @@ class KickgogoSettingsPage {
 		</thead>
 		<tbody>
 		<?php
-		$query = "SELECT cpg.*,(select count(amount) from $this->transaction_table where campaign_id = cpg.id) as transactions FROM $this->campaign_table as cpg";
-		foreach ($wpdb->get_results($query) as $row) {
+		foreach ($this->getCampaigns() as $row) {
 			?>
 			<tr>
 			<td><?php echo $row->id ?></td>
@@ -349,9 +348,10 @@ class KickgogoSettingsPage {
 			return;
 		}
 		
+		$campaign = $this->getCampaign($campaignId);
 		switch (@$_REQUEST['kickgogo-action']) {
 			case 'update':
-				if ($this->handle_update($campaignId, $_POST)) {
+				if ($this->handle_update($campaign->id, $_POST)) {
 					?>
 					<script>
 					window.location.href = '<?php echo menu_page_url('kickgogo', false);?>';
@@ -359,9 +359,12 @@ class KickgogoSettingsPage {
 					<?php
 					exit;
 				}
+				break;
+			case 'delete-transaction':
+				$this->deleteTransaction($campaign->name, $_POST['transaction']);
+				break;
 		}
 		
-		$campaign = $this->getCampaign($campaignId);
 		?>
 		<h1>Campaign: <?php echo $campaign->name ?></h1>
 		
@@ -419,7 +422,7 @@ class KickgogoSettingsPage {
 		<table class="widefat">
 		<thead>
 		<tr>
-		<th>#</th><th>Amount</th><th>Name</th><th>E-mail</th><th>Confirmation #</th><th>Transaction #</th>
+		<th>#</th><th>Amount</th><th>Name</th><th>E-mail</th><th>Confirmation #</th><th>Transaction #</th><th></th>
 		</tr>
 		</thead>
 		<tbody>
@@ -435,10 +438,37 @@ class KickgogoSettingsPage {
 			<td><?php echo $rowdetails->email?></td>
 			<td><?php echo $rowdetails->confirmation?></td>
 			<td><?php echo $rowdetails->code?></td>
+			<td>
+			<?php if ($row->test):?>
+			<i class="fas fa-trash" style="cursor: pointer;" onclick="deleteDonation(this);"></i>
+			<?php endif;?>
+			</td>
 		</tr>
 		<?php endforeach;?>
 		</tbody>
 		</table>
+		
+		<form id="delete-transaction" method="post" action="<?php menu_page_url('kickgogo-campaign')?>&campaign-id=<?php echo $campaignId?>">
+		<input type="hidden" name="kickgogo-action" value="delete-transaction">
+		<input type="hidden" name="transaction" value="">
+		</form>
+		
+		<script>
+		function deleteDonation(elm) {
+			var rowelms = elm.parentElement.parentElement.children;
+			var tid = rowelms[0].textContent.trim();
+			var amount = rowelms[1].textContent.trim();
+			var name = rowelms[2].textContent.trim();
+			if (!confirm("Are you sure you want to remove donation of " + amount + " from " + name + "?")) {
+				return false;
+			}
+			
+			var delform = document.getElementById('delete-transaction');
+			delform.querySelector('[name="transaction"]').value = tid;
+			delform.submit();
+			return true;
+		}
+		</script>
 		<?php
 	}
 	
@@ -515,17 +545,29 @@ class KickgogoSettingsPage {
 		return $wpdb->get_results($query);
 	}
 	
+	public function deleteTransaction($name, $tid) {
+		global $wpdb;
+		return $wpdb->update($this->transaction_table, [
+			'deleted' => 1,
+		], [ "id" => $tid]);
+	}
+	
 	public function getCampaign($name) {
 		global $wpdb;
 		if (is_numeric($name)) {
-			$sql = "
-			SELECT * FROM $this->campaign_table
-			WHERE id = " . ((int)$name);
+			$where = "cpg.id = " . ((int)$name);
 		} else {
-			$sql = "
-			SELECT * FROM $this->campaign_table
-			WHERE name = '" . esc_sql($name) . "'";
+			$where = "cpg.name = '" . esc_sql($name) . "'";
 		}
+		$sql = "
+			SELECT
+				cpg.id, cpg.name, cpg.active, cpg.goal, cpg.default_buy,
+				cpg.success_langing_page, cpg.failure_landing_page,
+				SUM(tr.amount) as current ,COUNT(tr.id) as transactions FROM $this->campaign_table as cpg
+			INNER JOIN $this->transaction_table as tr ON tr.campaign_id = cpg.id and tr.deleted = 0
+			WHERE $where
+			GROUP BY cpg.id;
+		";
 		$res = $wpdb->get_results($sql);
 		$campaign = current($res);
 		if (!$campaign)
@@ -538,5 +580,18 @@ class KickgogoSettingsPage {
 		$campaign->failure_landing_page = home_url('/kickgogo-handler/') . base64_encode(
 			$campaign->failure_landing_page ?: $campaign->success_langing_page);
 		return $campaign;
+	}
+	
+	public function getCampaigns() {
+		global $wpdb;
+		$query = "
+			SELECT
+				cpg.id, cpg.name, cpg.active, cpg.goal, cpg.default_buy,
+				cpg.success_langing_page, cpg.failure_landing_page,
+				SUM(tr.amount) as current ,COUNT(tr.id) as transactions FROM $this->campaign_table as cpg
+			INNER JOIN $this->transaction_table as tr ON tr.campaign_id = cpg.id and tr.deleted = 0
+			GROUP BY cpg.id;
+		";
+		return $wpdb->get_results($query);
 	}
 }
