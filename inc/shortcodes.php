@@ -185,19 +185,16 @@ class KickgogoShortcodes {
 		if (!$campaign) {
 			throw new Exception("Invalid campaign name");
 		}
-		error_log("debug: campaign is valid: $campaign->name");
 		
 		$token = @file_get_contents($this->settings->getClubAPIURL() . "/club/email/$email");
 		if ($token === false) {
 			throw new Exception("Invalid club address");
 		}
-		error_log("debug: club response: $token");
 		
 		$resp = json_decode($token);
 		if (!$resp->status) {
 			throw new Exception("Invalid club membership");
 		}
-		error_log("debug: decoded club response: ".print_r($resp, true));
 		
 		foreach ($this->settings->getTransactions($campaignName) as $t) {
 			if (trim(@$t->details->email) == trim($email) and @$t->details->data->club) {
@@ -208,8 +205,7 @@ class KickgogoShortcodes {
 					throw new Exception("Club membership may only be used once");
 			}
 		}
-		error_log("debug: first time club token: $resp->token");
-		die("done");
+		
 		return $this->processor->get_form(true, $amount, $campaign->name,
 			$campaign->id, $campaign->success_langing_page,
 			$campaign->failure_landing_page, [ "club" => $resp->token ]);
