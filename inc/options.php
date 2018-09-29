@@ -435,6 +435,7 @@ class KickgogoSettingsPage {
 			<td>
 				<?php echo $row->id?>
 				<?php if ($row->test):?><i title="Test transaction" class="fas fa-vial"></i><?php endif;?>
+				<?php if ($rowdetails->data and $rowdetails->data->club): ?><i title="Club member" class="fas fa-user-friends"></i><?php endif; ?>
 			</td>
 			<td><?php echo $row->amount?></td>
 			<td><?php echo $rowdetails->name?></td>
