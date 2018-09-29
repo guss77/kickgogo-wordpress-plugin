@@ -362,6 +362,14 @@ class KickgogoSettingsPage {
 		return get_option('kickgogo-club-api-url');
 	}
 	
+	public function getCampaignTable() {
+		return $this->campaign_table;
+	}
+	
+	public function getTransactionsTable() {
+		return $this->transaction_table;
+	}
+	
 	public function getTransactionCount($name) {
 		global $wpdb;
 		$query = "select count(amount) from $this->transaction_table AS tr INNER JOIN $this->campaign_table AS cpg ON tr.campaign_id = cpg.id and cpg.name = '$name'";

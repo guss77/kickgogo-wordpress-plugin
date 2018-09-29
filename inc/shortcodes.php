@@ -2,14 +2,12 @@
 
 class KickgogoShortcodes {
 	
-	private $table_name;
 	private $processor;
 	private $settings;
 	
 	public function __construct(KickgogoSettingsPage $settings) {
 		global $wpdb;
 		$this->settings = $settings;
-		$this->table_name = $wpdb->prefix . "_kickgogo_campaigns";
 		$this->processor = new KickgogoPelepayProcessor($this->settings->getPelepayAccount());
 		add_shortcode('kickgogo', [ $this, 'pay_form' ]);
 		add_shortcode('kickgogo-goal', [ $this, 'display_goal' ]);
@@ -120,8 +118,9 @@ class KickgogoShortcodes {
 			return false;
 		}
 		global $wpdb;
+		$campaigns = $this->settings->getCampaignTable();
 		$wpdb->query($wpdb->prepare(
-			"UPDATE $this->table_name
+			"UPDATE $campaigns
 			SET current = current + %d
 			WHERE id = %d",
 			$fund, $id));
