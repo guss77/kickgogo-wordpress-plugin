@@ -9,7 +9,7 @@ class KickgogoPelepayProcessor {
 		$this->account = $account;
 	}
 	
-	public function get_form($buttontext, $amount, $description, $order, $okurl, $failurl) {
+	public function get_form($buttontext, $amount, $description, $order, $okurl, $failurl, $custom = null) {
 		ob_start();
 		?>
 		<form name="pelepayform" action="https://www.pelepay.co.il/pay/paypage.aspx" method="post">
@@ -17,6 +17,9 @@ class KickgogoPelepayProcessor {
 		<INPUT type="hidden" name="amount" value="<?php echo $amount;?>">
 		<INPUT type="hidden" name="description" value="<?php echo $description?>">
 		<INPUT type="hidden" name="orderid" value="kickgogo:<?php echo $order?>">
+		<?php if ($custom):?>
+		<input type="hidden" name="custom" value="<?php echo is_array($custom) ? urlencode(json_encode($custom)) : $custom;?>">
+		<?php endif?>
 		<input type="hidden" name="success_return" value="<?php echo $okurl?>">
 		<input type="hidden" name="notify_url" value="<?php echo $okurl?>">
 		<input type="hidden" name="fail_return" value="<?php echo $failurl?>">
@@ -45,6 +48,15 @@ class KickgogoPelepayProcessor {
 		list($orderCode, $cpgid) = explode(':', $result['orderid']);
 		if ($result['Response'] == '000' && $orderCode == 'kickgogo') {
 			error_log("Kickgogo transaction successful: ". print_r($result, true));
+			
+			if ($result['custom']) {
+				$custom = json_decode($result['custom']);
+				if (is_null($custom))
+					$custom = [ 'value' => $result['custom']];
+			} else {
+				$custom = null;
+			}
+			
 			return [
 				'amount' => $result['amount'],
 				'campaign' => $cpgid,
@@ -54,7 +66,8 @@ class KickgogoPelepayProcessor {
 				'email' => $result['email'],
 				'phone' => $result['phone'],
 				'orderid' => $result['orderid'],
-				'test' => ($result['index'][0] == 'T')
+				'test' => ($result['index'][0] == 'T'),
+				'data' => $custom,
 			];
 		}
 		

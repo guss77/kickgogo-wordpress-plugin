@@ -156,19 +156,10 @@ class KickgogoShortcodes {
 		$error = null;
 		
 		if (isset($_POST['email'])) {
-			$email = $_POST['email'];
-			$campaign = $this->settings->getCampaign($campaignName);
-			if (!$campaign) {
-				$error = "Invalid campaign name";
-			} else {
-				$token = @file_get_contents($this->settings->getClubAPIURL() . "/club/email/$email");
-				if ($token === false) {
-					$error = "כתובת מועדון לא חוקית";
-				} else {
-					return $this->processor->get_form(true, $amount, $campaign->name,
-						$campaign->id, $campaign->success_langing_page,
-						$campaign->failure_landing_page);
-				}
+			try {
+				return $this->sendClubPayment($campaignName, $_POST['email'], $amount);
+			} catch (Exception $e) {
+				$error = $e->getMessage();
 			}
 		}
 		
@@ -187,6 +178,41 @@ class KickgogoShortcodes {
 		</div>
 		<?php
 		return ob_get_clean();
+	}
+	
+	private function sendClubPayment($campaignName, $email, $amount) {
+		$campaign = $this->settings->getCampaign($campaignName);
+		if (!$campaign) {
+			throw new Exception("Invalid campaign name");
+		}
+		error_log("debug: campaign is valid: $campaign->name");
+		
+		$token = @file_get_contents($this->settings->getClubAPIURL() . "/club/email/$email");
+		if ($token === false) {
+			throw new Exception("Invalid club address");
+		}
+		error_log("debug: club response: $token");
+		
+		$resp = json_decode($token);
+		if (!$resp->status) {
+			throw new Exception("Invalid club membership");
+		}
+		error_log("debug: decoded club response: ".print_r($resp, true));
+		
+		foreach ($this->settings->getTransactions($campaignName) as $t) {
+			if (trim(@$t->details->email) == trim($email) and @$t->details->data->club) {
+				$validate = @file_get_contents($this->settings->getClubAPIURL() . "/club/token/" . $t->details->data->club);
+				if (!$validate) continue;
+				$validate = json_decode($validate);
+				if (trim($validate->email) == trim($t->details->email))
+					throw new Exception("Club membership may only be used once");
+			}
+		}
+		error_log("debug: first time club token: $resp->token");
+		die("done");
+		return $this->processor->get_form(true, $amount, $campaign->name,
+			$campaign->id, $campaign->success_langing_page,
+			$campaign->failure_landing_page, [ "club" => $resp->token ]);
 	}
 	
 	public function handle_callbacks($query) {
