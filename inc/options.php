@@ -30,7 +30,7 @@ class KickgogoSettingsPage {
 	{
 		// This page will be under "Settings"
 		add_options_page(
-			'Kickgogo Settings',
+			__('Kickgogo Settings', 'kickgogo'),
 			'Kickgogo',
 			'manage_options',
 			'kickgogo-admin',
@@ -40,7 +40,7 @@ class KickgogoSettingsPage {
 		add_menu_page( 'Kickgogo', 'Kickgogo', 'manage_options',
 			'kickgogo', [$this, 'management_page' ], static::KICK_ICON);
 		
- 		add_submenu_page( 'kickgogo', 'Kickgogo Campaigns', 'Campaigns',
+		add_submenu_page( 'kickgogo', __('Kickgogo Campaigns', 'kickgogo'), __('Campaigns', 'kickgogo'),
  			'manage_options', 'kickgogo-campaign', [ $this, 'campaign_viewer' ]);
 	}
 	
@@ -67,14 +67,14 @@ class KickgogoSettingsPage {
 		
 		add_settings_section(
 			'kickgogo_section_global', // ID
-			'Global Settings', // Title
+			__('Global Settings', 'kickgogo'), // Title
 			array( $this, 'print_section_info_api' ), // Callback
 			'kickgogo-settings' // Page
 			);
 		
 		add_settings_field(
 			'pelepay-account', // ID
-			'Pelepay Account', // Title
+			__('Pelepay Account', 'kickgogo'), // Title
 			array( $this, 'pelepay_account_callback' ), // Callback
 			'kickgogo-settings', // Page
 			'kickgogo_section_global' // Section
@@ -82,7 +82,7 @@ class KickgogoSettingsPage {
 		
 		add_settings_field(
 			'club-login-page', // ID
-			'Club Login Page', // Title
+			__('Club Login Page', 'kickgogo'), // Title
 			array( $this, 'club_login_page_callback' ), // Callback
 			'kickgogo-settings', // Page
 			'kickgogo_section_global' // Section
@@ -90,7 +90,7 @@ class KickgogoSettingsPage {
 		
 		add_settings_field(
 			'club-api-url', // ID
-			'Club API Endpoint', // Title
+			__('Club API Endpoint', 'kickgogo'), // Title
 			array( $this, 'club_api_url_callback' ), // Callback
 			'kickgogo-settings', // Page
 			'kickgogo_section_global' // Section
@@ -108,7 +108,7 @@ class KickgogoSettingsPage {
 		$this->club_api_url = get_option('kickgogo-club-api-url');
 		?>
         <div class="wrap">
-            <h2>Kickgogo Settings</h2>
+            <h2><?php _e("Kickgogo Settings", 'kickgogo')?></h2>
             <form method="post" action="options.php">
             <?php
                 // This prints out all hidden setting fields
@@ -127,7 +127,7 @@ class KickgogoSettingsPage {
 	 */
 	public function print_section_info_api()
 	{
-		print 'Setup global options that apply to all campaigns';
+		_e('Setup global options that apply to all campaigns', 'kickgogo');
 	}
 	
 	/**
@@ -161,10 +161,9 @@ class KickgogoSettingsPage {
 	}
 	
 	public function management_page() {
-		global $wpdb;
 		//must check that the user has the required capability
 		if (!current_user_can('manage_options'))
-			wp_die( __('You do not have sufficient permissions to access this page.') );
+			wp_die( __('You do not have sufficient permissions to access this page.', 'kickgogo'));
 		
 			switch ($_POST['kickgogo-action']) {
 				case 'new':
@@ -179,17 +178,18 @@ class KickgogoSettingsPage {
 				case 'disable':
 					$this->handle_disable($_POST['id']);
 					break;
-				case 'details':
-					wp_redirect('/kickgogo-campaigns?campaign-id=' . $_POST['id']);
-					exit;
 			}
 					
 		?>
-		<h1>Campaigns</h1>
+		<h1><?php _e('Campaigns', 'kickgogo')?></h1>
 		<div>
 		<table class="widefat">
 		<thead>
-			<tr><th>#</th><th>Name</th><th>Goal</th><th>Default</th><th>Transasctions</th><th></th><th></th></tr>
+			<tr><th>#</th>
+			<th><?php _e('Name', 'kickgogo');?></th>
+			<th><?php _e('Goal', 'kickgogo');?></th>
+			<th><?php _e('Default', 'kickgogo');?></th>
+			<th><?php _e('Transasctions', 'kickgogo');?></th><th></th><th></th></tr>
 		</thead>
 		<tbody>
 		<?php
@@ -207,23 +207,24 @@ class KickgogoSettingsPage {
 			<td><?php echo $row->transactions?></td>
 			<td>
 				<?php if (!$row->active):?>
-					<strong>inactive</strong>
+					<strong><?php _e('inactive')?></strong>
 				<?php endif;?>
 			</td>
 			<td>
 				<form method="post" action="">
 				<input type="hidden" name="id" value="<?php echo $row->id?>">
 				<?php if ($row->active):?>
-					<button title="Disable <?php echo $row->name?>" type="submit"
+					<button title="<?php _e('Disable', 'kickgogo');?> <?php echo $row->name?>" type="submit"
 						name="kickgogo-action" value="disable">
 						<i class="fas fa-toggle-off"></i>
 					</button>
 				<?php else:?>
-					<button title="Enable <?php echo $row->name?>" type="submit"
+					<button title="<?php _e('Enable', 'kickgogo');?> <?php echo $row->name?>" type="submit"
 						name="kickgogo-action" value="enable">
 						<i class="fas fa-toggle-on"></i>
 					</button>
-					<button title="Delete <?php echo $row->name?>" type="submit" onclick="return confirm('Are you sure you want to completely remove this campaign? This is not recoverable.')"
+					<button title="<?php _e('Delete', 'kickgogo');?> <?php echo $row->name?>" type="submit" onclick="return confirm('<?php
+							_e('Are you sure you want to completely remove this campaign? This is not recoverable.', 'kickgogo'); ?>')"
 						name="kickgogo-action" value="delete">
 						<i class="fas fa-minus-circle"></i>
 					</button>
@@ -237,11 +238,12 @@ class KickgogoSettingsPage {
 		</tbody>
 		</table>
 		</div>
+		
+		<h3><?php _e('Create a new campaign', 'kickgogo')?></h3>
 		<div>
-		<h3>Create a new campaign</h3>
 		<?php if ($this->has_errors()): ?>
 			<div class="error fade">
-			<p><strong>Can't create campaign:</strong></p>
+			<p><strong><?php _e("Can't create campaign", 'kickgogo')?>:</strong></p>
 			<?php foreach ($this->errors as $error):?>
 			<p><?php echo $error;?></p>
 			<?php endforeach;?>
@@ -250,46 +252,46 @@ class KickgogoSettingsPage {
 		<form method="post" action="">
 		<input type="hidden" name="kickgogo-action" value="new">
 		<p>
-		<label for="kickgogo-campaign-name">Name:</label>
+		<label for="kickgogo-campaign-name"><?php _e('Name', 'kickgogo');?>:</label>
 		</p>
 		<p>
 		<input type="text" id="kickgogo-campaign-name" name="kickgogo-campaign-name">
 		</p>
 		<p>
-		<label for="kickgogo-campaign-goal">Goal:</label>
+		<label for="kickgogo-campaign-goal"><?php _e('Goal', 'kickgogo');?>:</label>
 		</p>
 		<p>
 		<input type="number" id="kickgogo-campaign-goal" name="kickgogo-campaign-goal" min="0">
 		</p>
 		<p>
-		<label for="kickgogo-campaign-goal">Default purchase amount:</label>
+		<label for="kickgogo-campaign-goal"><?php _e('Default purchase amount', 'kickgogo');?>:</label>
 		</p>
 		<p>
 		<input type="number" id="kickgogo-campaign-defbuy" name="kickgogo-campaign-defbuy" min="0">
 		</p>
 		<p>
-		(Optional, if not set the amount has to be specified for every Kickgogo button)
+		<?php _e('(Optional, if not set the amount has to be specified for every Kickgogo button)', 'kickgogo');?>
 		</p>
 		<p>
-		<label for="kickgogo-campaign-ok">Success langing page:</label>
+		<label for="kickgogo-campaign-ok"><?php _e('Success langing page', 'kickgogo');?>:</label>
 		</p>
 		<p>
 		<input type="text" id="kickgogo-campaign-ok" name="kickgogo-campaign-ok">
 		</p>
 		<p>
-		(leave empty to return the user to the page with the Kickgogo form)
+		<?php _e('(leave empty to return the user to the page with the Kickgogo form)', 'kickgogo');?>
 		</p>
 		<p>
-		<label for="kickgogo-campaign-err">Error langing page:</label>
+		<label for="kickgogo-campaign-err"><?php _e('Error langing page', 'kickgogo');?>:</label>
 		</p>
 		<p>
 		<input type="text" id="kickgogo-campaign-err" name="kickgogo-campaign-err">
 		</p>
 		<p>
-		(leave empty to return the user to the success page in case of an error)
+		<?php _e('(leave empty to return the user to the success page in case of an error)', 'kickgogo');?>
 		</p>
 		<p>
-		<button type="submit">Create Campaign</button>
+		<button type="submit"><?php _e('Create Campaign', 'kickgogo');?></button>
 		</p>
 		</form>
 		</div>
@@ -300,13 +302,13 @@ class KickgogoSettingsPage {
 		global $wpdb;
 		
 		if (empty($name = $data['kickgogo-campaign-name']))
-			$this->report_error('Missing campaign name');
+			$this->report_error(__('Missing campaign name', 'kickgogo'));
 		if (!is_numeric($data['kickgogo-campaign-goal'])) {
-			$this->report_error('Missing campaign goal');
+			$this->report_error(__('Missing campaign goal', 'kickgogo'));
 		} else {
 			$goal = (int)$data['kickgogo-campaign-goal'];
 			if ($goal <= 0)
-				$this->report_error('Campaign goal must be larger than zero');
+				$this->report_error(__('Campaign goal must be larger than zero', 'kickgogo'));
 		}
 		$defbuy = (int)$data['kickgogo-campaign-defbuy'];
 		$land_ok = $data['kickgogo-campaign-ok'];
@@ -343,7 +345,7 @@ class KickgogoSettingsPage {
 	public function campaign_viewer() {
 		if (!is_numeric($campaignId = @$_REQUEST['campaign-id'])) {
 			?>
-			<h3>Please select a campaign in the Kickgogo main campaign list</h3>
+			<h3><?php _e('Please select a campaign in the Kickgogo main campaign list', 'kickgogo');?></h3>
 			<?php
 			return;
 		}
@@ -369,11 +371,11 @@ class KickgogoSettingsPage {
 		}
 		
 		?>
-		<h1>Campaign: <?php echo $campaign->name ?></h1>
+		<h1><?php _e('Campaign', 'kickgogo');?>: <?php echo $campaign->name ?></h1>
 		
 		<?php if ($this->has_errors()): ?>
 			<div class="error fade">
-			<p><strong>Can't update campaign:</strong></p>
+			<p><strong><?php _e("Can't update campaign", 'kickgogo');?>:</strong></p>
 			<?php foreach ($this->errors as $error):?>
 			<p><?php echo $error;?></p>
 			<?php endforeach;?>
@@ -384,48 +386,53 @@ class KickgogoSettingsPage {
 		<form method="post" action="<?php menu_page_url('kickgogo-campaign')?>&campaign-id=<?php echo $campaignId?>">
 		<input type="hidden" name="kickgogo-action" value="update">
 		<p>
-		<label for="kickgogo-campaign-goal">Goal:</label>
+		<label for="kickgogo-campaign-goal"><?php _e('Goal', 'kickgogo');?>:</label>
 		</p>
 		<p>
 		<input type="number" id="kickgogo-campaign-goal" name="kickgogo-campaign-goal" min="0" value="<?php echo $campaign->goal?>">
 		</p>
 		<p>
-		<label for="kickgogo-campaign-goal">Default purchase amount:</label>
+		<label for="kickgogo-campaign-goal"><?php _e('Default purchase amount', 'kickgogo');?>:</label>
 		</p>
 		<p>
 		<input type="number" id="kickgogo-campaign-defbuy" name="kickgogo-campaign-defbuy" min="0" value="<?php echo $campaign->default_buy?>">
 		</p>
 		<p>
-		(Optional, if not set the amount has to be specified for every Kickgogo button)
+		<?php _e('(Optional, if not set the amount has to be specified for every Kickgogo button)', 'kickgogo');?>
 		</p>
 		<p>
-		<label for="kickgogo-campaign-ok">Success langing page:</label>
+		<label for="kickgogo-campaign-ok"><?php _e('Success langing page', 'kickgogo');?>:</label>
 		</p>
 		<p>
 		<input type="text" id="kickgogo-campaign-ok" name="kickgogo-campaign-ok" value="<?php echo $campaign->success_page?>">
 		</p>
 		<p>
-		(leave empty to return the user to the page with the Kickgogo form)
+		<?php _e('(leave empty to return the user to the page with the Kickgogo form)', 'kickgogo');?>
 		</p>
 		<p>
-		<label for="kickgogo-campaign-err">Error langing page:</label>
+		<label for="kickgogo-campaign-err"><?php _e('Error langing page', 'kickgogo');?>:</label>
 		</p>
 		<p>
 		<input type="text" id="kickgogo-campaign-err" name="kickgogo-campaign-err" value="<?php echo $campaign->failure_page?>">
 		</p>
 		<p>
-		(leave empty to return the user to the success page in case of an error)
+		<?php _e('(leave empty to return the user to the success page in case of an error)', 'kickgogo');?>
 		</p>
 		<p>
-		<button type="submit">Update Campaign</button>
+		<button type="submit"><?php _e('Update Campaign', 'kickgogo');?></button>
 		</p>
 		</form>
 		
-		<h2>Donations</h2>
+		<h2><?php _e('Donations', 'kickgogo');?></h2>
 		<table class="widefat">
 		<thead>
 		<tr>
-		<th>#</th><th>Amount</th><th>Name</th><th>E-mail</th><th>Confirmation #</th><th>Transaction #</th><th></th>
+		<th>#</th>
+		<th><?php _e('Amount', 'kickgogo');?></th>
+		<th><?php _e('Name', 'kickgogo');?></th>
+		<th><?php _e('E-mail', 'kickgogo');?></th>
+		<th><?php _e('Confirmation #', 'kickgogo');?></th>
+		<th><?php _e('Transaction #', 'kickgogo');?></th><th></th>
 		</tr>
 		</thead>
 		<tbody>
@@ -433,8 +440,8 @@ class KickgogoSettingsPage {
 		<tr>
 			<td>
 				<?php echo $row->id?>
-				<?php if ($row->test):?><i title="Test transaction" class="fas fa-vial"></i><?php endif;?>
-				<?php if (@$row->details->data->club): ?><i title="Club member: <?php echo $row->details->data->club; ?>" class="fas fa-user-friends"></i><?php endif; ?>
+				<?php if ($row->test):?><i title="<?php _e('Test transaction', 'kickgogo');?>" class="fas fa-vial"></i><?php endif;?>
+				<?php if (@$row->details->data->club): ?><i title="<?php _e('Club member', 'kickgogo');?>: <?php echo $row->details->data->club; ?>" class="fas fa-user-friends"></i><?php endif; ?>
 			</td>
 			<td><?php echo $row->amount?></td>
 			<td><?php echo @$row->details->name?></td>
@@ -462,7 +469,7 @@ class KickgogoSettingsPage {
 			var tid = rowelms[0].textContent.trim();
 			var amount = rowelms[1].textContent.trim();
 			var name = rowelms[2].textContent.trim();
-			if (!confirm("Are you sure you want to remove donation of " + amount + " from " + name + "?")) {
+			if (!confirm("<?php _e('Are you sure you want to remove donation of', 'kickgogo')?>" + amount + " <?php _e('from', 'kickgogo')?> " + name)) {
 				return false;
 			}
 			
@@ -473,39 +480,39 @@ class KickgogoSettingsPage {
 		}
 		</script>
 		
-		<h3>Add Donation Record Manually</h3>
+		<h3><?php _e('Add Donation Record Manually', 'kickgogo')?></h3>
 		
 		<p>
-		Please note that this operation does not actually perform any payment - it will just insert a new donation record to the database. This is useful
-		if you wish to test the UI or record payments received by another payment processor (e.g. cash).
+		<?php _e('Please note that this operation does not actually perform any payment - it will just insert a new donation record to the database. This is useful
+		if you wish to test the UI or record payments received by another payment processor (e.g. cash).', 'kickgogo')?>
 		</p>
 		
 		<form method="post" action="<?php menu_page_url('kickgogo-campaign')?>&campaign-id=<?php echo $campaignId?>">
 		<input type="hidden" name="kickgogo-action" value="add-donation">
 		
 		<p>
-		<label>Amount: <input type="number" name="amount" value="<?php echo $campaign->default_buy?>"></label>
+		<label><?php _e('Amount', 'kickgogo')?>: <input type="number" name="amount" value="<?php echo $campaign->default_buy?>"></label>
 		</p>
 		
 		<p>
-		<label>Name: <input type="text" name="name"></label> (optional)
+		<label><?php _e('Name', 'kickgogo')?>: <input type="text" name="name"></label> (optional)
 		</p>
 		
 		<p>
-		<label>E-mail: <input type="text" name="email"></label> (optional)
+		<label><?php _e('E-mail', 'kickgogo')?>: <input type="text" name="email"></label> (optional)
 		</p>
 		
 		<p>
-		<label>Phone: <input type="text" name="phone"></label> (optional)
+		<label><?php _e('Phone', 'kickgogo')?>: <input type="text" name="phone"></label> (optional)
 		</p>
 		
 		<p>
-		<label><input type="checkbox" name="test" value="1"> Test donation</label>
+		<label><input type="checkbox" name="test" value="1"> <?php _e('Test donation', 'kickgogo')?></label>
 		</p>
-		<div style="margin: 0; padding: 0"><small>(test donations count towards the total, but can be removed later)</small></div>
+		<div><small><?php _e('(test donations count towards the total, but can be removed later)', 'kickgogo')?></small></div>
 		
 		<p>
-		<button type="submit">Add</button>
+		<button type="submit"><?php _e('Add', 'kickgogo')?></button>
 		</p>
 
 		</form>
@@ -516,11 +523,11 @@ class KickgogoSettingsPage {
 		global $wpdb;
 		
 		if (!is_numeric($data['kickgogo-campaign-goal'])) {
-			$this->report_error('Missing campaign goal');
+			$this->report_error(__('Missing campaign goal', 'kickgogo'));
 		} else {
 			$goal = (int)$data['kickgogo-campaign-goal'];
 			if ($goal <= 0)
-				$this->report_error('Campaign goal must be larger than zero');
+				$this->report_error(__('Campaign goal must be larger than zero', 'kickgogo'));
 		}
 		$defbuy = (int)$data['kickgogo-campaign-defbuy'];
 		$land_ok = $data['kickgogo-campaign-ok'];
@@ -543,7 +550,7 @@ class KickgogoSettingsPage {
 		global $wpdb;
 		
 		if (!is_numeric($data['amount'])) {
-			$this->report_error('Missing donation amount!');
+			$this->report_error(__('Missing donation amount!', 'kickgogo'));
 		}
 		
 		if ($this->has_errors())
