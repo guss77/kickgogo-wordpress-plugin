@@ -1,0 +1,273 @@
+# Copyright (C) 2018 KickGoGo
+# This file is distributed under the same license as the KickGoGo package.
+msgid ""
+msgstr ""
+"Project-Id-Version: KickGoGo 1.6.3\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/kickgogo\n"
+"POT-Creation-Date: 2018-09-29 23:46:19+00:00\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"PO-Revision-Date: 2018-09-30 03:18+0300\n"
+"Language-Team: KickGoGo <kickgogo@roleplay.org.il>\n"
+"X-Generator: Poedit 2.1.1\n"
+"Last-Translator: \n"
+"Plural-Forms: nplurals=4; plural=(n==1 ? 0 : n==2 ? 1 : n>10 && n%10==0 ? "
+"2 : 3);\n"
+"Language: he_IL\n"
+
+#: inc/options.php:33 inc/options.php:111
+msgid "Kickgogo Settings"
+msgstr "הגדרות KickGoGo"
+
+#: inc/options.php:43
+msgid "Kickgogo Campaigns"
+msgstr "פרוייקטי KickGoGo"
+
+#: inc/options.php:43 inc/options.php:184
+msgid "Campaigns"
+msgstr "פרוייקטים"
+
+#: inc/options.php:70
+msgid "Global Settings"
+msgstr "הגדרות כלליות"
+
+#: inc/options.php:77
+msgid "Pelepay Account"
+msgstr "חשבון פלאפיי"
+
+#: inc/options.php:85
+msgid "Club Login Page"
+msgstr "דף כניסה למועדון"
+
+#: inc/options.php:93
+msgid "Club API Endpoint"
+msgstr "כתובת API של המועדון"
+
+#: inc/options.php:130
+msgid "Setup global options that apply to all campaigns"
+msgstr "הגדרת אפשרויות כלליות לכל הפרוייקטים"
+
+#: inc/options.php:166
+msgid "You do not have sufficient permissions to access this page."
+msgstr "אין לך הרשאות מספיקות לגשת לעמוד הזה"
+
+#: inc/options.php:189 inc/options.php:255 inc/options.php:432
+#: inc/options.php:498
+msgid "Name"
+msgstr "שם"
+
+#: inc/options.php:190 inc/options.php:261 inc/options.php:389
+msgid "Goal"
+msgstr "מטרה"
+
+#: inc/options.php:191
+msgid "Default"
+msgstr "ברירת מחדל"
+
+#: inc/options.php:192
+msgid "Transasctions"
+msgstr "תשלומים"
+
+#: inc/options.php:210
+msgid "inactive"
+msgstr "לא פעיל"
+
+#: inc/options.php:217
+msgid "Disable"
+msgstr "השבת"
+
+#: inc/options.php:222
+msgid "Enable"
+msgstr "הפעל"
+
+#: inc/options.php:226
+msgid "Delete"
+msgstr "מחק"
+
+#: inc/options.php:227
+msgid ""
+"Are you sure you want to completely remove this campaign? This is not "
+"recoverable."
+msgstr "האם להסיר את הפרוייקט הזה? זו פעולה בלתי הפיכה."
+
+#: inc/options.php:242
+msgid "Create a new campaign"
+msgstr "יצירת פרוייקט חדש"
+
+#: inc/options.php:246
+msgid "Can't create campaign"
+msgstr "לא ניתן ליצור את הפרוייקט"
+
+#: inc/options.php:267 inc/options.php:395
+msgid "Default purchase amount"
+msgstr "תשלום ברירת מחדל"
+
+#: inc/options.php:273 inc/options.php:401
+msgid ""
+"(Optional, if not set the amount has to be specified for every Kickgogo "
+"button)"
+msgstr "(לא חובה, אם לא מוגדר יהי צורך לציין את העלות בכל כפתור תשלום)"
+
+#: inc/options.php:276 inc/options.php:404
+msgid "Success langing page"
+msgstr "דף נחיתה להצלחה"
+
+#: inc/options.php:282 inc/options.php:410
+msgid "(leave empty to return the user to the page with the Kickgogo form)"
+msgstr "(אפשר להשאיר ריק כדי להחזיר את המשתמש לדף עם כפתור התשלום)"
+
+#: inc/options.php:285 inc/options.php:413
+msgid "Error langing page"
+msgstr "דף נחיתה לתקלות"
+
+#: inc/options.php:291 inc/options.php:419
+msgid ""
+"(leave empty to return the user to the success page in case of an error)"
+msgstr "(אפשר להשאיר ריק כדי להחזיר את המשתמש לדף ההצלחה במקרה של תקלה)"
+
+#: inc/options.php:294
+msgid "Create Campaign"
+msgstr "יצירת פרוייקט"
+
+#: inc/options.php:305
+msgid "Missing campaign name"
+msgstr "חסר שם פרוייקט"
+
+#: inc/options.php:307 inc/options.php:526
+msgid "Missing campaign goal"
+msgstr "חסר סכום מטרה לפרוייקט"
+
+#: inc/options.php:311 inc/options.php:530
+msgid "Campaign goal must be larger than zero"
+msgstr "סכום מטרה לפרוייקט צריך להיות גדול מאפס"
+
+#: inc/options.php:348
+msgid "Please select a campaign in the Kickgogo main campaign list"
+msgstr "יש לבחור פרוייקט בעמוד רשימת הפרוייקטים של KickGoGo"
+
+#: inc/options.php:374
+msgid "Campaign"
+msgstr "פרוייקט"
+
+#: inc/options.php:378
+msgid "Can't update campaign"
+msgstr "לא ניתן לעדכן פרוייקט"
+
+#: inc/options.php:422
+msgid "Update Campaign"
+msgstr "עדכן פרוייקט"
+
+#: inc/options.php:426
+msgid "Donations"
+msgstr "תרומות"
+
+#: inc/options.php:431 inc/options.php:494
+msgid "Amount"
+msgstr "סכום"
+
+#: inc/options.php:433 inc/options.php:502
+msgid "E-mail"
+msgstr "דואר אלקטרוני"
+
+#: inc/options.php:434
+msgid "Confirmation #"
+msgstr "מס. אישור"
+
+#: inc/options.php:435
+msgid "Transaction #"
+msgstr "מס. תשלום"
+
+#: inc/options.php:443
+msgid "Test transaction"
+msgstr "תשלום בדיקה"
+
+#: inc/options.php:444
+msgid "Club member"
+msgstr "חבר מועדון"
+
+#: inc/options.php:472
+msgid "Are you sure you want to remove donation of"
+msgstr "האם למחוק תרומה בסך"
+
+#: inc/options.php:472
+msgid "from"
+msgstr "על ידי"
+
+#: inc/options.php:483
+msgid "Add Donation Record Manually"
+msgstr "הוספת רישום תרומה ידני"
+
+#: inc/options.php:486
+msgid ""
+"Please note that this operation does not actually perform any payment - it "
+"will just insert a new donation record to the database. This is useful\n"
+"\t\tif you wish to test the UI or record payments received by another "
+"payment processor (e.g. cash)."
+msgstr ""
+"יש לשים לב שפעולה זו לא מבצעת שום תשלום - הפעולה רק יוצרת רישום של תרומה "
+"במסד הנתונים.\n"
+"זה יכול להיות שימוש לבדוק את ממשק המשתמש או לרשום תרומות שהתקבלו בצורה "
+"אחרת (לדוגמה: במזומן)."
+
+#: inc/options.php:506
+msgid "Phone"
+msgstr "טלפון"
+
+#: inc/options.php:510
+msgid "Test donation"
+msgstr "תשלום בדיקה"
+
+#: inc/options.php:512
+msgid "(test donations count towards the total, but can be removed later)"
+msgstr "(תשלומי בדיקה נחשבים לחישוב ההתקדמות למטרה, אך ניתן להסירם)"
+
+#: inc/options.php:515
+msgid "Add"
+msgstr "הוספה"
+
+#: inc/options.php:553
+msgid "Missing donation amount!"
+msgstr "חסר סכום התרומה!"
+
+#: inc/shortcodes.php:31 inc/shortcodes.php:49 inc/shortcodes.php:57
+#: inc/shortcodes.php:65 inc/shortcodes.php:73 inc/shortcodes.php:99
+#: inc/shortcodes.php:107 inc/shortcodes.php:185
+msgid "Invalid Kickgogo Campaign"
+msgstr "פרוייקט KickGoGo לא חוקי"
+
+#: inc/shortcodes.php:36
+msgid "Invalid purchase amount"
+msgstr "סכום רכישה לא חוקי"
+
+#: inc/shortcodes.php:190
+msgid "Invalid club address"
+msgstr "כתובת מועדון לא חוקית"
+
+#: inc/shortcodes.php:195
+msgid "Invalid club membership"
+msgstr "חברות מועדון לא חוקית"
+
+#: inc/shortcodes.php:204
+msgid "Club membership may only be used once"
+msgstr "חברות במועדון תקפה לתשלום אחד בלבד"
+
+#. Plugin Name of the plugin/theme
+msgid "KickGoGo"
+msgstr "KickGoGo"
+
+#. Plugin URI of the plugin/theme
+msgid "http://github.com/guss77/kickgogo-wordpress-plugin"
+msgstr "http://github.com/guss77/kickgogo-wordpress-plugin"
+
+#. Description of the plugin/theme
+msgid "Crowd-funding campaign manager"
+msgstr "ניהול פרוייקטי מימון המונים"
+
+#. Author of the plugin/theme
+msgid "Oded Arbel"
+msgstr "עודד ארבל"
+
+#. Author URI of the plugin/theme
+msgid "https://github.com/guss77/kickgogo-wordpress-plugin"
+msgstr "https://github.com/guss77/kickgogo-wordpress-plugin"
