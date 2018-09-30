@@ -196,18 +196,18 @@ class KickgogoShortcodes {
 		}
 		
 		foreach ($this->settings->getTransactions($campaignName) as $t) {
-			if (trim(@$t->details->email) == trim($email) and @$t->details->data->club) {
+			if (trim(@$t->details->data->club_email) == trim($email) and @$t->details->data->club) {
 				$validate = @file_get_contents($this->settings->getClubAPIURL() . "/club/token/" . $t->details->data->club);
 				if (!$validate) continue;
 				$validate = json_decode($validate);
-				if (trim($validate->email) == trim($t->details->email))
+				if (trim($validate->email) == trim($t->details->data->club_email))
 					throw new Exception(__("Club membership may only be used once", 'kickgogo'));
 			}
 		}
 		
 		return $this->processor->get_form(true, $amount, $campaign->name,
 			$campaign->id, $campaign->success_langing_page,
-			$campaign->failure_landing_page, [ "club" => $resp->token, "club-email" => $email ]);
+			$campaign->failure_landing_page, [ "club" => $resp->token, "club_email" => $email ]);
 	}
 	
 	public function handle_callbacks($query) {
