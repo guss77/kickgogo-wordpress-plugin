@@ -207,7 +207,7 @@ class KickgogoShortcodes {
 		
 		return $this->processor->get_form(true, $amount, $campaign->name,
 			$campaign->id, $campaign->success_langing_page,
-			$campaign->failure_landing_page, [ "club" => $resp->token ]);
+			$campaign->failure_landing_page, [ "club" => $resp->token, "club-email" => $email ]);
 	}
 	
 	public function handle_callbacks($query) {
